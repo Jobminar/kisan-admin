@@ -1,0 +1,54 @@
+.users-main {
+    display: flex;
+    justify-content: space-evenly;
+    flex-wrap: wrap;
+    gap: 2rem;
+    font-family: Inter;
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+    margin: 2rem;
+}
+
+.users-con h1 {
+    font-family: Inter;
+    font-size: 35px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+    margin: 0.5rem;
+    color: green;
+}
+
+.user-card h2 {
+    font-family: Inter;
+    font-size: 35px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+    margin: 0.5rem;
+    color: green;
+}
+
+.user-card {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2), 0 6px 20px rgba(0, 0, 0, 0.2);
+    padding: 1rem;
+    margin: 1rem; /* Add margin for spacing */
+}
+
+.sidebar-content {
+    padding: 1rem;
+  }
+  
+  .contact-card {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2), 0 6px 20px rgba(0, 0, 0, 0.2);
+    padding: 1rem;
+    margin: 1rem;
+    background-color: #f5f5f5; /* Set your desired background color */
+    border-radius: 8px;
+  }
+  
+  .sidebar-drawer {
+    width: 300px; /* Set your desired width for the sidebar */
+  }

@@ -1,0 +1,99 @@
+/* AboutUs.css */
+.styled-box {
+    width: 100%;
+    padding: 20px;
+    background-color: #f7f7f7;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .image-box {
+      margin: 1rem 0rem;
+      width: 98%;
+      height: auto;
+      margin-left: auto;
+      margin-right: auto;
+      position: relative;
+      height: 25rem;
+      /* border: 1px solid black; */
+  }
+  
+  .main-content{
+    font-family: Inter;
+    font-size: 20px;
+    font-weight: 400;
+    line-height: 35px;
+    letter-spacing: 0em;
+    text-align: left;
+    margin: 1rem 3rem;
+    color: black;
+
+}
+  .about-image {
+    width: 100%;
+    max-height: 800px;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+  .cards{
+    display: flex;
+    justify-content: space-evenly;
+    margin-bottom: 2rem
+  }
+  
+  .card {
+    width: 100%;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+    padding: 20px;
+    transition: box-shadow 0.3s;
+  }
+  
+  .card:hover {
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  }
+  
+  h2 {
+    font-family: Inter;
+    font-size: 25px;
+    font-weight: 400;
+    line-height: 35px;
+    letter-spacing: 0em;
+    text-align: left;
+    color: black;
+  }
+  
+  p {
+    font-family: Inter;
+    font-size: 18px;
+    font-weight: 400;
+    line-height: 30px;
+    letter-spacing: 0em;
+    text-align: left;
+    color: #666;
+
+  }
+  /*  */
+  
+  /* Paragraph in two lines for smaller screens */
+  @media (max-width: 600px) {
+    .card p {
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      -webkit-line-clamp: 2;
+    }
+  
+    .styled-box {
+      padding: 10px;
+    }
+  
+    .about-image {
+      max-height: 300px;
+    }
+  }
+  
+  

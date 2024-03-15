@@ -1,0 +1,27 @@
+.inventory-con {
+    width: 50%;
+    margin-left: auto;
+    margin-right: auto;
+    margin: 0.5rem auto;
+    padding: 2rem 0rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* border: 1px solid black; */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    row-gap: 1rem;
+}
+/* .inventory-con div{
+    width: 80%;
+} */
+.inventoty-head{
+    font-family: Inter;
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 50px;
+    margin: 0px;
+    text-align: center;
+}

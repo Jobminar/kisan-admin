@@ -1,0 +1,140 @@
+.footer-section{
+  width: 100%;
+  height: auto;
+  /* border: 1px solid 
+  rgba(244, 130, 31, 1); */
+  display: grid;
+  grid-template-columns: 100%;
+
+}
+.footer-logo img{
+   width: 80%;
+   height: 80%;
+   /* display: flex;
+   justify-content: center;
+   align-items: center; */
+   text-align: center;
+}
+.footer-content{
+  background-color: rgba(61, 131, 40, 1);
+  /* border: 1px solid black; */
+  border-radius: 8px 8px 0px 0px;
+}
+.footer-content div h1
+{
+  padding: 1rem 0rem;
+  font-family: Inter;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 21px;
+  letter-spacing: 0em;
+  text-align: left;
+  color: white;
+
+
+}
+.footer-content div p{
+  font-family: Inter;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 25px;
+  letter-spacing: 0em;
+  text-align: left;
+  color: white
+  
+
+}
+.social-media a{
+  width: 2rem;
+  height: 2rem;
+  margin-right: 1rem;
+}
+.footer-content{
+  display: grid;
+  grid-template-columns: 25% 25% 25% 25%;
+  
+}
+.play-app{
+  width: 15rem;
+  height: 6rem;
+
+}
+.play-app img{
+  width: 100%;
+  height: 100%;
+}
+.Information,.company,.contactus,.workingsales{
+  padding-left: 2rem;
+}
+.workingsales p{
+  line-height: 40px;
+}
+.company p:hover{
+  cursor: pointer;
+}
+.Information p:hover{
+    cursor: pointer;
+}
+
+@media (min-width: 360px) and (max-width: 600px){
+  /* Existing CSS styles... */
+
+      .company-content {
+          display: none;
+          /* Additional styles as needed */
+      }
+
+      /* Show the company content when showCompanyContent state is true */
+      .company-content.show {
+          display: block;
+          /* Additional styles as needed */
+      }
+
+  .footer-section{
+      display: grid;
+      grid-template-columns: 0% 100%;
+  
+  }
+  
+  
+  .footer-content div h1
+  {
+      padding: 0rem 0rem;
+      font-family: Roboto;
+      font-size: 28px;
+      font-weight: 600;
+      line-height: 31px;
+      letter-spacing: 0em;
+      text-align: left;
+      color: white;
+      margin-top: 2rem;
+  
+  
+  }
+  .footer-content div p{
+      font-family: Roboto;
+      font-size: 20px;
+      font-weight: 400;
+      line-height: 25px;
+      letter-spacing: 0em;
+      text-align: left;
+      color: white
+      
+  
+  }
+  .social-media a{
+      width: 2rem;
+      height: 2rem;
+      margin-right: 1rem;
+  }
+  .footer-content{
+      display: grid;
+      grid-template-columns: 100%;
+      column-gap: 1rem;
+      
+  }
+  .Information,.company,.contactus,.workingsales{
+      padding-left: 2rem;
+  }
+  
+}
