@@ -4,7 +4,7 @@ import useRazorpay from "react-razorpay";
 import "./orders.css";
 import OrderPopup from "./orderPopup";
 import { io as socketIo } from "socket.io-client";
-import Kissanlogo from "../../../assets/images/kissanlogo.png";
+import Kissanlogo from "../../../assets/images/Kissanlogo.png";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
