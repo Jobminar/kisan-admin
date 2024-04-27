@@ -1,128 +1,108 @@
 import { useState } from "react";
-import "./Inventory.css";
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
-import Box from "@mui/material/Box";
-import TextField from "@mui/material/TextField";
-import Button from "@mui/material/Button";
-import Swal from "sweetalert2"; // Import Swal for displaying alerts
-import axios from "axios";
+import imageCompression from "browser-image-compression";
+import {
+  Box,
+  Button,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  TextField,
+  Typography,
+} from "@mui/material";
+import "./Inventory.css"; // Ensure this file exists and is properly linked
 
 const Inventory = () => {
   const [formData, setFormData] = useState({
     category: "",
     itemname: "",
-    description: "",
-    units: "kg",
+    units: "",
     costPerUnit: "",
-    discount: "0",
+    discount: "",
+    description: "",
     itemImage: null,
   });
 
-  const handleFileChange = (e) => {
-    setFormData({
-      ...formData,
-      itemImage: e.target.files[0],
-    });
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleChange = (event) => {
-    const { name, value } = event.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
+  const handleFileChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) {
+      return;
+    }
+
+    try {
+      const options = {
+        maxSizeMB: 1,
+        maxWidthOrHeight: 1920,
+        useWebWorker: true,
+      };
+
+      const compressedFile = await imageCompression(file, options);
+      setFormData({ ...formData, itemImage: compressedFile });
+    } catch (error) {
+      console.error("Error compressing the image:", error);
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // Check if all mandatory fields are filled
-    for (const key in formData) {
-      if (!formData[key]) {
-        // Show an error message using Swal if any field is empty
-        Swal.fire({
-          icon: "error",
-          title: "Error",
-          text: "Please fill all mandatory fields",
-        });
-        return;
-      }
-    }
-
-    // Display a confirmation dialog
-    const isConfirmed = window.confirm(
-      "Are you sure you want to add this item?"
-    );
-
-    if (!isConfirmed) {
-      return; // Do nothing if the user cancels the confirmation
-    }
-
-    try {
-      const formDataToSend = new FormData();
-      for (const key in formData) {
+    const formDataToSend = new FormData();
+    Object.keys(formData).forEach((key) => {
+      if (key === "itemImage" && formData[key]) {
+        formDataToSend.append(key, formData[key], formData[key].name);
+      } else {
         formDataToSend.append(key, formData[key]);
       }
-      const token = localStorage.getItem("token");
-      const response = await axios.post(
-        "http://localhost:4000/addItem",
-        formDataToSend,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+    });
 
-      if (response.status === 201) {
-        // Show a success message using Swal
-        Swal.fire({
-          icon: "success",
-          title: "Success",
-          text: "Item added successfully",
-        });
-        console.log(formData)
-        // Reset the form data
-        setFormData({
-          category: "",
-          itemname: "",
-          description: "",
-          units: "kg",
-          costPerUnit: "",
-          discount: "0",
-          itemImage: null,
-        });
+    const token = localStorage.getItem("token");
+    console.log("Token:", token); // Check if the token is null or undefined.
+    // Retrieve the token from local storage
+
+    try {
+      const response = await fetch("http://localhost:4000/additem", {
+        method: "POST",
+        body: formDataToSend,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.ok) {
+        console.log("Successfully uploaded");
+        // Additional logic for handling successful upload
+      } else {
+        console.error("Failed to upload data", response.statusText);
+        // Additional logic for handling errors
       }
     } catch (error) {
-      console.error("Error adding item:", error);
-      // Show an error message using Swal
-      Swal.fire({
-        icon: "error",
-        title: "Error",
-        text: "Failed to add item to inventory",
-      });
+      console.error("Error in submission:", error);
+      // Additional error handling logic
     }
   };
 
   return (
     <>
-      <h1 className="inventoty-head">Add Your Products here..</h1>
-      <div className="inventory-con">
-        <FormControl variant="standard" sx={{ m: 0, minWidth: "85%" }}>
-          <InputLabel id="category-label">Category *</InputLabel>
+      <Typography variant="h4" className="inventory-head">
+        Add Your Products Here
+      </Typography>
+      <Box
+        className="inventory-con"
+        sx={{ maxWidth: "600px", width: "100%", mx: "auto" }}
+      >
+        <FormControl fullWidth variant="standard" sx={{ mb: 2 }}>
+          <InputLabel htmlFor="category">Category *</InputLabel>
           <Select
             labelId="category-label"
             id="category"
             required
             name="category"
             value={formData.category}
-            onChange={(e) => handleChange(e)}
+            onChange={handleChange}
             label="Category"
-            sx={{ background: "transparent" }}
           >
             <MenuItem value="">
               <em>None</em>
@@ -133,56 +113,31 @@ const Inventory = () => {
             <MenuItem value="quickPicks">Quickpicks</MenuItem>
             <MenuItem value="offerZone">Offers</MenuItem>
             <MenuItem value="additionals">Additionals</MenuItem>
-           
           </Select>
         </FormControl>
 
-        <Box
-          component="form"
-          sx={{
-            "& .MuiTextField-root": {
-              m: 2,
-              width: "90%",
-              "&:hover": {
-                "& fieldset": {
-                  borderColor: "green",
-                },
-              },
-              "&:focus-within": {
-                "& fieldset": {
-                  borderColor: "green",
-                },
-              },
-            },
-            width: "90%",
-            margin: "auto",
-          }}
-          noValidate
-          autoComplete="off"
-        >
-          <TextField
-            id="name"
-            required
-            label="Item Name *"
-            name="itemname"
-            type="string"
-            variant="standard"
-            value={formData.itemname}
-            onChange={(e) => handleChange(e)}
-          />
-        </Box>
+        <TextField
+          fullWidth
+          required
+          id="itemname"
+          name="itemname"
+          label="Item Name *"
+          type="text"
+          variant="standard"
+          value={formData.itemname}
+          onChange={handleChange}
+          sx={{ mb: 2 }}
+        />
 
-        <FormControl variant="standard" sx={{ m: 0, minWidth: "85%" }}>
-          <InputLabel id="units-label">Units *</InputLabel>
+        <FormControl fullWidth variant="standard" sx={{ mb: 2 }}>
+          <InputLabel htmlFor="units">Units *</InputLabel>
           <Select
             labelId="units-label"
             id="units"
             required
             name="units"
             value={formData.units}
-            onChange={(e) => handleChange(e)}
-            label="Units"
-            sx={{ background: "transparent" }}
+            onChange={handleChange}
           >
             <MenuItem value="kg">kg</MenuItem>
             <MenuItem value="Grams">Grams</MenuItem>
@@ -191,99 +146,68 @@ const Inventory = () => {
           </Select>
         </FormControl>
 
-        <Box
-          component="form"
-          sx={{
-            "& .MuiTextField-root": { m: 2, width: "90%" },
-            width: "90%",
-            margin: "auto",
-          }}
-          noValidate
-          autoComplete="off"
-        >
-          <TextField
-            id="name"
-            label="costPerUnit *"
-            type="string"
-            name="costPerUnit"
-            variant="standard"
-            required
-            value={formData.costPerUnit}
-            onChange={(e) => handleChange(e)}
-          />
-        </Box>
+        <TextField
+          fullWidth
+          required
+          id="costPerUnit"
+          name="costPerUnit"
+          label="Cost Per Unit *"
+          type="text"
+          variant="standard"
+          value={formData.costPerUnit}
+          onChange={handleChange}
+          sx={{ mb: 2 }}
+        />
 
-        <Box
-          component="form"
-          sx={{
-            "& .MuiTextField-root": { m: 2, width: "90%" },
-            width: "90%",
-            margin: "auto",
-          }}
-          noValidate
-          autoComplete="off"
-        >
-          <TextField
-            id="name"
-            label="Discount"
-            type="number"
-            name="discount"
-            variant="standard"
-            value={formData.discount}
-            onChange={(e) => handleChange(e)}
-          />
-        </Box>
+        <TextField
+          fullWidth
+          id="discount"
+          name="discount"
+          label="Discount"
+          type="number"
+          variant="standard"
+          value={formData.discount}
+          onChange={handleChange}
+          sx={{ mb: 2 }}
+        />
 
-        <Box
-          component="form"
-          sx={{
-            "& .MuiTextField-root": { m: 2, width: "90%" },
-            width: "90%",
-            margin: "auto",
-          }}
-          noValidate
-          autoComplete="off"
-        >
-          <TextField
-            id="name"
-            label="description *"
-            type="string"
-            variant="standard"
-            required
-            name="description"
-            value={formData.description}
-            onChange={(e) => handleChange(e)}
-          />
-        </Box>
+        <TextField
+          fullWidth
+          required
+          id="description"
+          name="description"
+          label="Description *"
+          type="text"
+          variant="standard"
+          value={formData.description}
+          onChange={handleChange}
+          sx={{ mb: 2 }}
+        />
 
-        <label>
+        <label
+          htmlFor="itemImage"
+          style={{ display: "block", marginTop: "20px" }}
+        >
           Item Images:
           <input
             type="file"
+            id="itemImage"
             name="itemImage"
             multiple
             required
             onChange={handleFileChange}
+            style={{ display: "block", width: "100%" }}
           />
         </label>
 
         <Button
           variant="contained"
-          sx={{
-            width: "30%",
-            backgroundColor: "green",
-            margin: "auto",
-            display: "block",
-            "&:active": {
-              backgroundColor: "darkgreen",
-              boxShadow: "none",
-            },
-          }}
+          sx={{ mt: 2, width: "50%", alignSelf: "center" }}
           onClick={handleSubmit}
         >
           Submit
         </Button>
-      </div>
+      </Box>
     </>
   );
 };
