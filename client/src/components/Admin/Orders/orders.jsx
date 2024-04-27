@@ -3,25 +3,25 @@ import axios from "axios";
 import useRazorpay from "react-razorpay";
 import "./orders.css";
 import OrderPopup from "./orderPopup";
-import { io as socketIo } from "socket.io-client";
+// import { io as socketIo } from "socket.io-client";
 import Kissanlogo from "../../../assets/images/Kissanlogo.png";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-const socket = socketIo("https://kisanmart.onrender.com", {
-  withCredentials: true,
-  extraHeaders: {
-    "Access-Control-Allow-Origin": "http://localhost:5173",
-  },
-});
+// const socket = socketIo("https://localhost:4000", {
+//   withCredentials: true,
+//   extraHeaders: {
+//     "Access-Control-Allow-Origin": "http://localhost:5173",
+//   },
+// });
 
-socket.on("connect", () => {
-  console.log("Connected to socket");
-});
+// socket.on("connect", () => {
+//   console.log("Connected to socket");
+// });
 
-socket.on("connect", () => {
-  console.log("Connected to socket");
-});
+// socket.on("connect", () => {
+//   console.log("Connected to socket");
+// });
 const Orders = () => {
   const [cartItems, setCartItems] = useState([]);
   const [selectedItem, setSelectedItem] = useState(null);
@@ -32,7 +32,7 @@ const Orders = () => {
     const fetchCartItems = async () => {
       try {
         const response = await axios.get(
-          "https://kisanmart.onrender.com/getorders"
+          "http://localhost:4000/getorders"
         );
         setCartItems(response.data);
       } catch (error) {
@@ -79,7 +79,7 @@ const Orders = () => {
 
       // Make a DELETE request to remove the item
       const response = await axios.delete(
-        `https://kisanmart.onrender.com/orders/${orderId}`
+        `http://localhost:4000/orders/${orderId}`
       );
 
       console.log("Item removed:", response.data);
@@ -161,7 +161,7 @@ const Orders = () => {
     try {
       // Make a POST request to update the order status to "refunded"
       const response = await axios.put(
-        "https://kisanmart.onrender.com/orderId/status",
+        "http://localhost:4000/orderId/status",
         {
           orderId: orderId,
           newOrderStatus: "refunded",
@@ -173,11 +173,11 @@ const Orders = () => {
       // Emit socket event after a successful response
       if (response.data) {
         console.log("Before socket emission");
-        const successMessage = `Refund processed successfully for ${item.itemName}. Price: ${item.price}, Units: ${item.units}, Discount: ${item.discount}`;
-        socket.emit("successMessage", {
-          userId: item.userId,
-          message: successMessage,
-        });
+      //   const successMessage = `Refund processed successfully for ${item.itemName}. Price: ${item.price}, Units: ${item.units}, Discount: ${item.discount}`;
+      //   socket.emit("successMessage", {
+      //     userId: item.userId,
+      //     message: successMessage,
+        // });
         console.log("Refund Success Message Sent:", successMessage);
 
         // Log a message after sending the success message
@@ -200,7 +200,7 @@ const Orders = () => {
       }
 
       const response = await axios.put(
-        "https://kisanmart.onrender.com/orderId/status",
+        "http://localhost:4000/orderId/status",
         {
           orderId: orderId,
           newOrderStatus: "delivered",
@@ -211,11 +211,11 @@ const Orders = () => {
 
       // Emit socket event after successful response
       if (response.data) {
-        const successMessage = `Order initiated for delivery successfully for ${item.count} Number of ${item.itemName}. Price: ${item.price}, Units: ${item.units}, Discount: ${item.discount}`;
-        socket.emit("successMessage", {
-          userId: item.userId,
-          message: successMessage,
-        });
+        // const successMessage = `Order initiated for delivery successfully for ${item.count} Number of ${item.itemName}. Price: ${item.price}, Units: ${item.units}, Discount: ${item.discount}`;
+        // socket.emit("successMessage", {
+        //   userId: item.userId,
+        //   message: successMessage,
+        // });
         console.log("Delivery Success Message Sent:", successMessage);
 
         // Log a message after sending the success message
@@ -228,7 +228,7 @@ const Orders = () => {
   //fetching user data_____________________________________________________________
   const fetchUserData = async (userId) => {
     try {
-      const response = await fetch("https://kisanmart.onrender.com/api/users", {
+      const response = await fetch("http://localhost:4000/api/users", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

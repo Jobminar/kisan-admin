@@ -2,33 +2,47 @@ import React, { useState, useEffect } from "react";
 import "./tabs.css";
 import CreateOutlinedIcon from "@mui/icons-material/CreateOutlined";
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
+import CircularProgress from "@mui/material/CircularProgress";
 import { useNavigate } from "react-router-dom";
 
-const FreshVegetable = () => {
+const FreshFruits = () => {
   const navigate = useNavigate();
   const [inventoryData, setInventoryData] = useState([]);
+  const [isLoading, setIsLoading] = useState(true); // State to manage loading state
 
   useEffect(() => {
-    const apiUrl = "https://kisanmart.onrender.com/inventory";
+    const apiUrl = "http://localhost:4000/inventory"; // Assuming your backend is running locally on port 4000
 
-    fetch(apiUrl)
-      .then((response) => {
+    const fetchData = async () => {
+      try {
+        const token = localStorage.getItem("token");
+
+        const response = await fetch(apiUrl, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
         if (!response.ok) {
           throw new Error(`Network response was not ok: ${response.status}`);
         }
-        return response.json();
-      })
-      .then((data) => {
-        // Filter items with category "freshVegetables"
-        const freshVegetables = data.items.filter(
+
+        const data = await response.json();
+        // Filter items with category "freshFruits"
+        const freshFruits = data.items.filter(
           (item) => item.category === "freshFruits"
         );
-        setInventoryData(freshVegetables);
-      })
-      .catch((error) => {
+        setInventoryData(freshFruits);
+        setIsLoading(false); // Set loading state to false after data fetching is complete
+      } catch (error) {
         console.error("Error fetching data:", error);
-      });
+        setIsLoading(false); // Set loading state to false in case of error
+      }
+    };
+
+    fetchData();
   }, []);
+
   // handle delete
   const handleItemDelete = async (itemId) => {
     try {
@@ -41,7 +55,7 @@ const FreshVegetable = () => {
         return; // Do nothing if the user cancels the confirmation
       }
 
-      const deleteUrl = `https://kisanmart.onrender.com/inventory/${itemId}`;
+      const deleteUrl = `https://localhost:4000/inventory/${itemId}`;
 
       const response = await fetch(deleteUrl, {
         method: "DELETE",
@@ -66,40 +80,41 @@ const FreshVegetable = () => {
   };
 
   // handle update
-  const [selectedProduct, setSelectedProduct] = useState("");
-
   const handleProduct = (item) => {
-    setSelectedProduct(item);
     navigate("/productupdate", { state: { selectedProduct: item } });
     console.log(item, "data");
   };
 
   return (
     <div className="main-product-con">
-      {inventoryData.map((item) => (
-        <div key={item._id} className="product-sub-con">
-          <div className="product-image">
-            <img
-              src={`data:image/png;base64, ${item.itemImage}`}
-              alt={`Item ${item.itemName}`}
-            />
-          </div>
-          <div className="product-content">
-            <p>{item.itemname}</p>
-            <p>{item.costPerUnit}</p>
-          </div>
-          <div className="edit-delete-buttons">
-            <div onClick={() => handleProduct(item)}>
-              <CreateOutlinedIcon />
+      {isLoading ? ( // Render CircularProgress if data is still loading
+        <CircularProgress sx={{color:"green"}}/>
+      ) : (
+        inventoryData.map((item) => (
+          <div key={item._id} className="product-sub-con">
+            <div className="product-image">
+              <img
+                src={`data:image/png;base64, ${item.itemImage}`}
+                alt={`Item ${item.itemName}`}
+              />
             </div>
-            <div onClick={() => handleItemDelete(item._id)}>
-              <DeleteOutlineOutlinedIcon />
+            <div className="product-content">
+              <p>{item.itemname}</p>
+              <p>{item.costPerUnit}</p>
+            </div>
+            <div className="edit-delete-buttons">
+              <div onClick={() => handleProduct(item)}>
+                <CreateOutlinedIcon />
+              </div>
+              <div onClick={() => handleItemDelete(item._id)}>
+                <DeleteOutlineOutlinedIcon />
+              </div>
             </div>
           </div>
-        </div>
-      ))}
+        ))
+      )}
     </div>
   );
 };
 
-export default FreshVegetable;
+export default FreshFruits

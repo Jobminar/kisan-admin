@@ -88,7 +88,7 @@ const ProductUpdate = () => {
       }
 
       const response = await axios.put(
-        `https://kisanmart.onrender.com/updateItem/${selectedProduct._id}`,
+        `http://localhost:4000/updateItem/${selectedProduct._id}`,
         {
           category: editformData.category,
           itemname: editformData.itemname,

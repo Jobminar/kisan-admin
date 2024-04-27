@@ -15,13 +15,13 @@ const Users = () => {
 
   useEffect(() => {
     // Fetch users data from the API
-    fetch("https://kisanmart.onrender.com/users")
+    fetch("https://localhost:4000/users")
       .then((response) => response.json())
       .then((data) => setUsersData(data))
       .catch((error) => console.error("Error fetching users data:", error));
 
     // Fetch contact forms data from the API
-    fetch("https://kisanmart.onrender.com/contact-us")
+    fetch("https://localhost:4000/contact-us")
       .then((response) => response.json())
       .then((data) => setContactForms(data))
       .catch((error) =>

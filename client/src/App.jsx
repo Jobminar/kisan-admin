@@ -15,6 +15,8 @@ import Returnexchange from "./components/User/return-exchange";
 import Privacypolicy from "./components/User/privacy-policy";
 import Termsconditions from "./components/User/terms-conditions";
 import Reports from "./components/Admin/reports";
+import All from "./All";
+import FruitList from "./Get";
 
 function App() {
   const [isLoggedIn, setLoggedIn] = useState(false);
@@ -35,6 +37,7 @@ function App() {
 
   const handleLogout = () => {
     // Clear login status from sessionStorage
+    localStorage.removeItem("token")
     sessionStorage.removeItem("isLoggedIn");
     setLoggedIn(false);
     // Additional logout logic if needed
@@ -52,6 +55,8 @@ function App() {
               <Route path="/users" element={<Users />} />
               <Route path="/orders" element={<Orders />} />
               <Route path="/reports" element={<Reports />} />
+              <Route path="/all" element={<All/>} />
+              <Route path="/get" element={<FruitList />} />
             </>
           ) : (
             <Route path="/" element={<Login onLogin={handleLogin} />} />

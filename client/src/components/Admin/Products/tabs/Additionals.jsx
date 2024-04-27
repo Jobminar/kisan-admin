@@ -9,9 +9,14 @@ const FreshVegetable = () => {
   const [inventoryData, setInventoryData] = useState([]);
 
   useEffect(() => {
-    const apiUrl = "https://kisanmart.onrender.com/inventory";
-
-    fetch(apiUrl)
+    const token = localStorage.getItem("token");
+    const apiUrl = "http://localhost:4000/inventory";
+  
+    fetch(apiUrl, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
       .then((response) => {
         if (!response.ok) {
           throw new Error(`Network response was not ok: ${response.status}`);
@@ -19,16 +24,17 @@ const FreshVegetable = () => {
         return response.json();
       })
       .then((data) => {
-        // Filter items with category "freshVegetables"
-        const freshVegetables = data.items.filter(
+        // Filter items with category "additionals"
+        const additionals = data.items.filter(
           (item) => item.category === "additionals"
         );
-        setInventoryData(freshVegetables);
+        setInventoryData(additionals);
       })
       .catch((error) => {
         console.error("Error fetching data:", error);
       });
   }, []);
+  
   // handle delete
   const handleItemDelete = async (itemId) => {
     try {
@@ -41,7 +47,7 @@ const FreshVegetable = () => {
         return; // Do nothing if the user cancels the confirmation
       }
 
-      const deleteUrl = `https://kisanmart.onrender.com/inventory/${itemId}`;
+      const deleteUrl = `https://localhost:4000/inventory/${itemId}`;
 
       const response = await fetch(deleteUrl, {
         method: "DELETE",

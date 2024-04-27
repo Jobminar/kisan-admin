@@ -28,7 +28,7 @@ const Contactus = () => {
       console.log("Before submission - Form Data:", formData);
 
       const response = await fetch(
-        `https://kisanmart.onrender.com/contact-us`,
+        `https://localhost:4000/contact-us`,
         {
           method: "POST",
           headers: {

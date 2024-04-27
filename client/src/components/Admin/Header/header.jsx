@@ -77,7 +77,20 @@ const Header = ({ isLoggedIn, onLogout }) => {
           >
             Reports
           </div>
-          
+          <div
+            onClick={() => {
+              navigate("/all");
+            }}
+          >
+           All
+          </div>
+          <div
+            onClick={() => {
+              navigate("/get");
+            }}
+          >
+           Get
+          </div>
           <div
             onClick={() => {
               handleLogout();

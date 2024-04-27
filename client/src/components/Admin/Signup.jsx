@@ -1,60 +1,33 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios"; // Import axios for making API requests
+import Swal from "sweetalert2"; // Import Swal for displaying alerts
 import "./Signup.css"; // Import your custom CSS for styling
 import logo from "../../assets/images/Kissanlogo.png";
-const SignUp = () => {
-  const [userName, setUserName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [passwordInput, setPasswordInput] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [status, setStatus] = useState(false);
 
+const SignUp = () => {
+  const [phone, setPhone] = useState('');
+  const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
-  const verify = (e) => {
+  const handleSignup = async (e) => {
     e.preventDefault();
-
-    if (passwordInput === confirmPassword) {
-      setStatus(false);
-      makeApiRequest();
-      navigate("/");
-    } else {
-      setStatus(true);
-    }
-  };
-
-  const makeApiRequest = async () => {
     try {
-      const apiUrl = "https://kisanmart.onrender.com/signup";
-
-      const requestBody = {
-        userName,
-        phoneNumber,
-        password: passwordInput,
-        email,
-      };
-
-      const response = await fetch(apiUrl, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(requestBody),
+      const response = await axios.post('http://localhost:4000/admin/signup', { phone, password });
+      console.log(response.data.message);
+      Swal.fire({
+        icon: "success",
+        title: "Signup",
+        text: "Signup successfully completed"
       });
-
-      if (response.ok) {
-        // Successful response
-        window.alert("Sign up successful!"); // Display an alert for success
-      } else {
-        // Error response
-        console.error("API Error:", response.statusText);
-        window.alert("Sign up failed. Please try again."); // Display an alert for failure
-      }
+      navigate("/");
     } catch (error) {
-      // Handle network or other errors
-      console.error("API Error:", error.message);
-      window.alert("Network error. Please try again later."); // Display an alert for network error
+      // console.error("Error during signup:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Failed to Signup",
+        text: "Please try again later"
+      });
     }
   };
 
@@ -68,47 +41,23 @@ const SignUp = () => {
           style={{ width: "10%", height: "auto" }}
         />
         <span id="title2">
-          {" "}
           Empowering vegetable sale with KISSAN MART - Your trusted platform for
           seamless transactions, wider reach, and increased sales!
         </span>
       </div>
 
       <div className="input-container">
-        <form onSubmit={verify}>
-          <fieldset>
-            <legend>User Name</legend>
-            <input
-              type="text"
-              id="userName"
-              name="userName"
-              value={userName}
-              onChange={(e) => setUserName(e.target.value)}
-              className="input-box"
-            />
-          </fieldset>
-          <fieldset>
-            <legend>Email</legend>
-            <input
-              type="email"
-              name="email"
-              id="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="input-box"
-            />
-          </fieldset>
+        <form onSubmit={handleSignup}>
           <fieldset>
             <legend>Phone no</legend>
             <div className="number-input">
               <p>+91</p>
               <input
                 type="number"
-                id="phoneNumber"
-                name="phoneNumber"
-                value={phoneNumber}
-                onChange={(e) => setPhoneNumber(e.target.value)}
+                id="phone"
+                name="phone"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
                 required
                 className="input-box"
               />
@@ -120,20 +69,8 @@ const SignUp = () => {
               type="password"
               id="password"
               name="password"
-              value={passwordInput}
-              onChange={(e) => setPasswordInput(e.target.value)}
-              required
-              className="input-box"
-            />
-          </fieldset>
-          <fieldset>
-            <legend>Confirm Password</legend>
-            <input
-              type="password"
-              id="confirmPassword"
-              name="confirmPassword"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               required
               className="input-box"
             />
@@ -141,13 +78,6 @@ const SignUp = () => {
           <button type="submit" className="submit-button">
             Sign Up
           </button>
-          {status && (
-            <div>
-              <p style={{ color: "red" }}>
-                *Password or Confirm Password is invalid
-              </p>
-            </div>
-          )}
         </form>
       </div>
       <p>

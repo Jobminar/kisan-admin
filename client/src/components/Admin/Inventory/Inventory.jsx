@@ -7,7 +7,7 @@ import Select from "@mui/material/Select";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
-
+import Swal from "sweetalert2"; // Import Swal for displaying alerts
 import axios from "axios";
 
 const Inventory = () => {
@@ -18,7 +18,6 @@ const Inventory = () => {
     units: "kg",
     costPerUnit: "",
     discount: "0",
-    // quantity: "0",
     itemImage: null,
   });
 
@@ -40,6 +39,19 @@ const Inventory = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Check if all mandatory fields are filled
+    for (const key in formData) {
+      if (!formData[key]) {
+        // Show an error message using Swal if any field is empty
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "Please fill all mandatory fields",
+        });
+        return;
+      }
+    }
+
     // Display a confirmation dialog
     const isConfirmed = window.confirm(
       "Are you sure you want to add this item?"
@@ -54,36 +66,45 @@ const Inventory = () => {
       for (const key in formData) {
         formDataToSend.append(key, formData[key]);
       }
-
-      await axios.post(
-        "https://kisanmart.onrender.com/addItem",
+      const token = localStorage.getItem("token");
+      const response = await axios.post(
+        "http://localhost:4000/addItem",
         formDataToSend,
         {
           headers: {
             "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`,
           },
         }
       );
 
-      // Show a success message
-      alert("Item added successfully");
-
-      // Optionally, you can redirect the user to another page or update the UI
-      setFormData({
-        category: "",
-        itemname: "",
-        description: "",
-        units: "kg",
-        costPerUnit: "",
-        discount: "0",
-        // quantity: "0",
-        itemImages: null,
-      });
+      if (response.status === 201) {
+        // Show a success message using Swal
+        Swal.fire({
+          icon: "success",
+          title: "Success",
+          text: "Item added successfully",
+        });
+        console.log(formData)
+        // Reset the form data
+        setFormData({
+          category: "",
+          itemname: "",
+          description: "",
+          units: "kg",
+          costPerUnit: "",
+          discount: "0",
+          itemImage: null,
+        });
+      }
     } catch (error) {
       console.error("Error adding item:", error);
-
-      // Show an error message
-      alert("Error adding item to inventory");
+      // Show an error message using Swal
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "Failed to add item to inventory",
+      });
     }
   };
 
@@ -91,9 +112,8 @@ const Inventory = () => {
     <>
       <h1 className="inventoty-head">Add Your Products here..</h1>
       <div className="inventory-con">
-        {/* categeory */}
         <FormControl variant="standard" sx={{ m: 0, minWidth: "85%" }}>
-          <InputLabel id="category-label">Category</InputLabel>
+          <InputLabel id="category-label">Category *</InputLabel>
           <Select
             labelId="category-label"
             id="category"
@@ -113,10 +133,9 @@ const Inventory = () => {
             <MenuItem value="quickPicks">Quickpicks</MenuItem>
             <MenuItem value="offerZone">Offers</MenuItem>
             <MenuItem value="additionals">Additionals</MenuItem>
+           
           </Select>
         </FormControl>
-
-        {/* item namee */}
 
         <Box
           component="form"
@@ -144,7 +163,7 @@ const Inventory = () => {
           <TextField
             id="name"
             required
-            label="Item Name"
+            label="Item Name *"
             name="itemname"
             type="string"
             variant="standard"
@@ -153,9 +172,8 @@ const Inventory = () => {
           />
         </Box>
 
-        {/* Units */}
         <FormControl variant="standard" sx={{ m: 0, minWidth: "85%" }}>
-          <InputLabel id="units-label">Units</InputLabel>
+          <InputLabel id="units-label">Units *</InputLabel>
           <Select
             labelId="units-label"
             id="units"
@@ -172,7 +190,7 @@ const Inventory = () => {
             <MenuItem value="Number">Number</MenuItem>
           </Select>
         </FormControl>
-        {/* cost */}
+
         <Box
           component="form"
           sx={{
@@ -185,7 +203,7 @@ const Inventory = () => {
         >
           <TextField
             id="name"
-            label="costPerUnit"
+            label="costPerUnit *"
             type="string"
             name="costPerUnit"
             variant="standard"
@@ -194,7 +212,7 @@ const Inventory = () => {
             onChange={(e) => handleChange(e)}
           />
         </Box>
-        {/* discount */}
+
         <Box
           component="form"
           sx={{
@@ -211,34 +229,11 @@ const Inventory = () => {
             type="number"
             name="discount"
             variant="standard"
-            required
             value={formData.discount}
             onChange={(e) => handleChange(e)}
           />
         </Box>
-        {/* quantity */}
-        {/* <Box
-          component="form"
-          sx={{
-            '& .MuiTextField-root': { m: 2, width: '90%' },
-            width: '90%',
-            margin: 'auto',
-          }}
-          noValidate
-          autoComplete="off"
-        >
-          <TextField
-            id="name"
-            label="Quantity"
-            type="number"
-            variant="standard"
-            required
-            name='quantity'
-            value={formData.quantity}
-            onChange={(e) => handleChange(e)}
-          />
-        </Box> */}
-        {/* description */}
+
         <Box
           component="form"
           sx={{
@@ -251,7 +246,7 @@ const Inventory = () => {
         >
           <TextField
             id="name"
-            label="description"
+            label="description *"
             type="string"
             variant="standard"
             required
@@ -260,17 +255,16 @@ const Inventory = () => {
             onChange={(e) => handleChange(e)}
           />
         </Box>
+
         <label>
           Item Images:
-          <label>
-            Item Images:
-            <input
-              type="file"
-              name="itemImage"
-              multiple
-              onChange={handleFileChange}
-            />
-          </label>
+          <input
+            type="file"
+            name="itemImage"
+            multiple
+            required
+            onChange={handleFileChange}
+          />
         </label>
 
         <Button
@@ -281,8 +275,8 @@ const Inventory = () => {
             margin: "auto",
             display: "block",
             "&:active": {
-              backgroundColor: "darkgreen", // Change the color when the button is clicked
-              boxShadow: "none", // You can customize other styles as well
+              backgroundColor: "darkgreen",
+              boxShadow: "none",
             },
           }}
           onClick={handleSubmit}

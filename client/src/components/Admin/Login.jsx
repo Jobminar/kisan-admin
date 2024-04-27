@@ -4,11 +4,7 @@ import { useNavigate } from "react-router-dom";
 import "./Login.css";
 
 const Login = ({ onLogin }) => {
-  const [formData, setFormData] = useState({
-    phoneNumber: "",
-    password: "",
-  });
-
+  const [formData, setFormData] = useState({ phone: "", password: "" });
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -17,8 +13,7 @@ const Login = ({ onLogin }) => {
 
   const handleLogin = async () => {
     try {
-      const apiUrl = "https://kisanmart.onrender.com/login";
-
+      const apiUrl = "http://localhost:4000/admin/login";
       const response = await fetch(apiUrl, {
         method: "POST",
         headers: {
@@ -29,20 +24,16 @@ const Login = ({ onLogin }) => {
 
       if (response.status === 200) {
         const data = await response.json();
-        if (data.message === "Login successful") {
-          sessionStorage.setItem("isLoggedIn", "true");
-          onLogin();
-          navigate("/inventory");
-        } else {
-          console.error("Login failed:", data.message);
-          alert("Login failed. Please try again.");
-        }
+        sessionStorage.setItem("isLoggedIn", "true");
+        onLogin();
+        localStorage.setItem("token", data.token); // Extract token from response data
+        navigate("/inventory");
       } else {
-        console.error("Login failed:", response.statusText);
+        // console.error("Login failed:", response.statusText);
         alert("Login failed. Please try again.");
       }
     } catch (error) {
-      console.error("API Error:", error.message);
+      // console.error("API Error:", error.message);
       alert("An error occurred. Please try again later.");
     }
   };
@@ -52,19 +43,15 @@ const Login = ({ onLogin }) => {
     navigate("/forgot");
   };
 
-  // const handleSignup = () => {
-  //   navigate("/signup");
-  // };
-
   return (
     <div id="login-container">
       <h2 id="login-title">User Login</h2>
       <form>
-        <label htmlFor="phoneNumber">Phone Number:</label>
+        <label htmlFor="phone">Phone Number:</label>
         <input
           type="tel"
-          id="phoneNumber"
-          name="phoneNumber"
+          id="phone"
+          name="phone"
           onChange={handleChange}
           required
         />
@@ -89,9 +76,6 @@ const Login = ({ onLogin }) => {
         >
           Forgot Password?
         </p>
-        {/* <p id="signup-link" className="forgot-password" onClick={handleSignup}>
-          Signup here if you don't have an account...
-        </p> */}
       </form>
     </div>
   );
