@@ -30,6 +30,7 @@ const Inventory = () => {
   const handleFileChange = async (e) => {
     const file = e.target.files[0];
     if (!file) {
+      console.log("No file selected.");
       return;
     }
 
@@ -47,6 +48,20 @@ const Inventory = () => {
     }
   };
 
+  const getApiUrl = () => {
+    const apiEndpoints = {
+      freshVegetables: "http://localhost:4000/post-vegetables",
+      freshFruits: "http://localhost:4000/post-fruits",
+      leafyVegetables: "http://localhost:4000/post-leaf",
+      quickPicks: "http://localhost:4000/post-offer",
+      offerZone: "http://localhost:4000/post-quick",
+      additionals: "http://localhost:4000/post-additional",
+    };
+    return (
+      apiEndpoints[formData.category] || "http://localhost:4000/additem/default"
+    );
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const formDataToSend = new FormData();
@@ -59,11 +74,11 @@ const Inventory = () => {
     });
 
     const token = localStorage.getItem("token");
-    console.log("Token:", token); // Check if the token is null or undefined.
-    // Retrieve the token from local storage
+    console.log("the token is like this", token);
+    const apiUrl = getApiUrl();
 
     try {
-      const response = await fetch("http://localhost:4000/additem", {
+      const response = await fetch(apiUrl, {
         method: "POST",
         body: formDataToSend,
         headers: {
@@ -72,15 +87,13 @@ const Inventory = () => {
       });
 
       if (response.ok) {
+        alert("Item Added Successfully");
         console.log("Successfully uploaded");
-        // Additional logic for handling successful upload
       } else {
         console.error("Failed to upload data", response.statusText);
-        // Additional logic for handling errors
       }
     } catch (error) {
       console.error("Error in submission:", error);
-      // Additional error handling logic
     }
   };
 
@@ -107,10 +120,10 @@ const Inventory = () => {
             <MenuItem value="">
               <em>None</em>
             </MenuItem>
-            <MenuItem value="freshVegetables">Fresh vegetables</MenuItem>
+            <MenuItem value="freshVegetables">Fresh Vegetables</MenuItem>
             <MenuItem value="freshFruits">Fresh Fruits</MenuItem>
-            <MenuItem value="leafyVegetables">Leafy vegetables</MenuItem>
-            <MenuItem value="quickPicks">Quickpicks</MenuItem>
+            <MenuItem value="leafyVegetables">Leafy Vegetables</MenuItem>
+            <MenuItem value="quickPicks">Quick Picks</MenuItem>
             <MenuItem value="offerZone">Offers</MenuItem>
             <MenuItem value="additionals">Additionals</MenuItem>
           </Select>
@@ -138,11 +151,12 @@ const Inventory = () => {
             name="units"
             value={formData.units}
             onChange={handleChange}
+            label="Units"
           >
-            <MenuItem value="kg">kg</MenuItem>
-            <MenuItem value="Grams">Grams</MenuItem>
-            <MenuItem value="Dozen">Dozen</MenuItem>
-            <MenuItem value="Number">Number</MenuItem>
+            <MenuItem value="kg">Kilograms</MenuItem>
+            <MenuItem value="grams">Grams</MenuItem>
+            <MenuItem value="dozen">Dozen</MenuItem>
+            <MenuItem value="number">Number</MenuItem>
           </Select>
         </FormControl>
 

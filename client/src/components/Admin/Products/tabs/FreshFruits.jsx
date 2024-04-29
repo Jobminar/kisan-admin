@@ -1,22 +1,29 @@
-import React, { useState, useEffect } from "react";
-import "./tabs.css";
+import React, { useState, useEffect, useRef } from "react";
 import CreateOutlinedIcon from "@mui/icons-material/CreateOutlined";
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
-import CircularProgress from "@mui/material/CircularProgress";
 import { useNavigate } from "react-router-dom";
+import "./tabs.css";
 
 const FreshFruits = () => {
   const navigate = useNavigate();
   const [inventoryData, setInventoryData] = useState([]);
-  const [isLoading, setIsLoading] = useState(true); // State to manage loading state
+  const [loading, setLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  const fetched = useRef(false); // Ref to track if the fetchInventory has been called
 
   useEffect(() => {
-    const apiUrl = "http://localhost:4000/inventory"; // Assuming your backend is running locally on port 4000
+    if (fetched.current) {
+      return; // If fetchInventory has already been called, do nothing
+    }
+    fetched.current = true; // Set fetched to true to prevent future executions
 
-    const fetchData = async () => {
+    const fetchInventory = async () => {
+      if (loading || !hasMore) return;
+      setLoading(true);
+      const token = localStorage.getItem("token");
+      const apiUrl = `http://localhost:4000/get-fruits`;
+
       try {
-        const token = localStorage.getItem("token");
-
         const response = await fetch(apiUrl, {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -27,94 +34,96 @@ const FreshFruits = () => {
           throw new Error(`Network response was not ok: ${response.status}`);
         }
 
-        const data = await response.json();
-        // Filter items with category "freshFruits"
-        const freshFruits = data.items.filter(
-          (item) => item.category === "freshFruits"
-        );
-        setInventoryData(freshFruits);
-        setIsLoading(false); // Set loading state to false after data fetching is complete
+        const result = await response.json();
+        console.log("Received data:", result);
+
+        if (!Array.isArray(result) || result.length === 0) {
+          setHasMore(false);
+          console.error("Data is empty or not in expected format:", result);
+          return;
+        }
+
+        setInventoryData((prev) => [...prev, ...result]);
       } catch (error) {
         console.error("Error fetching data:", error);
-        setIsLoading(false); // Set loading state to false in case of error
+      } finally {
+        setLoading(false);
       }
     };
 
-    fetchData();
-  }, []);
+    fetchInventory();
+  }, [loading, hasMore]); // Include loading and hasMore in the dependency array
 
-  // handle delete
   const handleItemDelete = async (itemId) => {
+    const token = localStorage.getItem("token");
+    if (!window.confirm("Are you sure you want to delete this item?")) {
+      return;
+    }
+
     try {
-      // Display a confirmation dialog
-      const isConfirmed = window.confirm(
-        "Are you sure you want to delete this item?"
-      );
-
-      if (!isConfirmed) {
-        return; // Do nothing if the user cancels the confirmation
-      }
-
-      const deleteUrl = `https://localhost:4000/inventory/${itemId}`;
-
+      const deleteUrl = `http://localhost:4000/deletefruit/${itemId}`; // Use the item ID in the delete URL
       const response = await fetch(deleteUrl, {
         method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       if (!response.ok) {
         throw new Error(`Failed to delete item. Status: ${response.status}`);
       }
 
-      // Remove the deleted item from the local state
       setInventoryData((prevData) =>
-        prevData.filter((item) => item._id !== itemId)
+        prevData.filter((item) => item._id !== itemId),
       );
-
-      // Show a success message
       alert("Item deleted successfully");
     } catch (error) {
       console.error("Error deleting item:", error);
-      // Show an error message
       alert(`Error deleting item: ${error.message}`);
     }
   };
 
-  // handle update
   const handleProduct = (item) => {
     navigate("/productupdate", { state: { selectedProduct: item } });
-    console.log(item, "data");
   };
 
   return (
     <div className="main-product-con">
-      {isLoading ? ( // Render CircularProgress if data is still loading
-        <CircularProgress sx={{color:"green"}}/>
-      ) : (
-        inventoryData.map((item) => (
-          <div key={item._id} className="product-sub-con">
-            <div className="product-image">
-              <img
-                src={`data:image/png;base64, ${item.itemImage}`}
-                alt={`Item ${item.itemName}`}
-              />
-            </div>
-            <div className="product-content">
-              <p>{item.itemname}</p>
-              <p>{item.costPerUnit}</p>
-            </div>
-            <div className="edit-delete-buttons">
-              <div onClick={() => handleProduct(item)}>
-                <CreateOutlinedIcon />
-              </div>
-              <div onClick={() => handleItemDelete(item._id)}>
-                <DeleteOutlineOutlinedIcon />
-              </div>
+      {inventoryData.map((item) => (
+        <div key={item._id} className="product-sub-con">
+          <div className="product-image">
+            <img
+              src={`data:image/png;base64,${item.itemImage}`}
+              alt={`Item ${item.itemName}`}
+            />
+          </div>
+          <div className="product-content">
+            <h4>{item.itemName}</h4>
+            <div className="grid-container">
+              <div className="grid-item label">Price per Unit:</div>
+              <div className="grid-item">{item.costPerUnit}</div>
+              <div className="grid-item label">Discount:</div>
+              <div className="grid-item">{item.discount}</div>
+              <div className="grid-item label">Available Units:</div>
+              <div className="grid-item">{item.units}</div>
+              <div className="grid-item label">Description:</div>
+              <div className="grid-item">{item.description}</div>
             </div>
           </div>
-        ))
-      )}
+          <div className="edit-delete-buttons">
+            <div onClick={() => handleProduct(item)}>
+              <CreateOutlinedIcon />
+            </div>
+            <div onClick={() => handleItemDelete(item._id)}>
+              <DeleteOutlineOutlinedIcon />
+            </div>
+          </div>
+        </div>
+      ))}
+      {loading && <p>Loading...</p>}
+      {!hasMore && <p>No more items to load.</p>}
     </div>
   );
 };
 
-export default FreshFruits
+export default FreshFruits;

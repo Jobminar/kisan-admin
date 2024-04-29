@@ -80,7 +80,7 @@ const ProductUpdate = () => {
     try {
       // Display a confirmation dialog
       const isConfirmed = window.confirm(
-        "Are you sure you want to update this item?"
+        "Are you sure you want to update this item?",
       );
 
       if (!isConfirmed) {
@@ -100,7 +100,7 @@ const ProductUpdate = () => {
         },
         {
           headers: { "Content-Type": "application/json" },
-        }
+        },
       );
 
       if (response.status === 200) {
