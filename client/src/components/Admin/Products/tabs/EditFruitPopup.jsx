@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import PropTypes from "prop-types"; // Import PropTypes
+import PropTypes from "prop-types";
 import { Button, TextField } from "@mui/material";
 
 const EditFruitPopup = ({ onClose, category, id }) => {
@@ -19,10 +19,42 @@ const EditFruitPopup = ({ onClose, category, id }) => {
     }));
   };
 
-  const handleSubmit = () => {
-    // Handle form submission
-    console.log(formData);
-    onClose(); // Close the popup after submission
+  const handleSubmit = async () => {
+    try {
+      // Define API endpoints based on the category
+      let apiUrl = "";
+      switch (category) {
+        case "freshFruits":
+          apiUrl = `http://localhost:4000/fresh-fruits/${id}`;
+          break;
+        case "dryFruits":
+          apiUrl = `http://localhost:4000/dry-fruits/${id}`;
+          break;
+        case "exoticFruits":
+          apiUrl = `http://localhost:4000/exotic-fruits/${id}`;
+          break;
+        default:
+          throw new Error("Invalid category");
+      }
+
+      const response = await fetch(apiUrl, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to update item. Status: ${response.status}`);
+      }
+
+      console.log("Item updated successfully");
+      onClose();
+    } catch (error) {
+      console.error("Error updating item:", error);
+      alert(`Error updating item: ${error.message}`);
+    }
   };
 
   return (
@@ -66,7 +98,6 @@ const EditFruitPopup = ({ onClose, category, id }) => {
   );
 };
 
-// Prop validation using PropTypes
 EditFruitPopup.propTypes = {
   onClose: PropTypes.func.isRequired,
   category: PropTypes.string.isRequired,

@@ -1,21 +1,35 @@
+// FreshFruits.js
 import React, { useState, useEffect, useRef } from "react";
 import CreateOutlinedIcon from "@mui/icons-material/CreateOutlined";
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
 import { useNavigate } from "react-router-dom";
+import { Button } from "@mui/material";
+import EditFruitPopup from "./EditFruitPopup";
 import "./tabs.css";
 
 const FreshFruits = () => {
+  const openPopup = (category, id) => {
+    setSelectedCategory(category);
+    setSelectedId(id);
+    setIsPopupOpen(true);
+  };
+
+  const closePopup = () => {
+    setIsPopupOpen(false);
+  };
   const navigate = useNavigate();
   const [inventoryData, setInventoryData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
-  const fetched = useRef(false); // Ref to track if the fetchInventory has been called
-
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const fetched = useRef(false);
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedId, setSelectedId] = useState("");
   useEffect(() => {
     if (fetched.current) {
-      return; // If fetchInventory has already been called, do nothing
+      return;
     }
-    fetched.current = true; // Set fetched to true to prevent future executions
+    fetched.current = true;
 
     const fetchInventory = async () => {
       if (loading || !hasMore) return;
@@ -52,7 +66,7 @@ const FreshFruits = () => {
     };
 
     fetchInventory();
-  }, [loading, hasMore]); // Include loading and hasMore in the dependency array
+  }, [loading, hasMore]);
 
   const handleItemDelete = async (itemId) => {
     const token = localStorage.getItem("token");
@@ -61,7 +75,7 @@ const FreshFruits = () => {
     }
 
     try {
-      const deleteUrl = `http://localhost:4000/deletefruit/${itemId}`; // Use the item ID in the delete URL
+      const deleteUrl = `http://localhost:4000/deletefruit/${itemId}`;
       const response = await fetch(deleteUrl, {
         method: "DELETE",
         headers: {
@@ -117,11 +131,22 @@ const FreshFruits = () => {
             <div onClick={() => handleItemDelete(item._id)}>
               <DeleteOutlineOutlinedIcon />
             </div>
+            <Button onClick={() => openPopup("freshFruits", item._id)}>
+              Edit Fruit
+            </Button>
           </div>
         </div>
       ))}
       {loading && <p>Loading...</p>}
       {!hasMore && <p>No more items to load.</p>}
+
+      {isPopupOpen && (
+        <EditFruitPopup
+          onClose={closePopup}
+          category={selectedCategory}
+          id={selectedId}
+        />
+      )}
     </div>
   );
 };
