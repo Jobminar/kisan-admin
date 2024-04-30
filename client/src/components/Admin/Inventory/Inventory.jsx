@@ -53,8 +53,8 @@ const Inventory = () => {
       freshVegetables: "http://localhost:4000/post-vegetables",
       freshFruits: "http://localhost:4000/post-fruits",
       leafyVegetables: "http://localhost:4000/post-leaf",
-      quickPicks: "http://localhost:4000/post-offer",
-      offerZone: "http://localhost:4000/post-quick",
+      offerZone: "http://localhost:4000/post-offer",
+      quickPicks: "http://localhost:4000/post-quick",
       additionals: "http://localhost:4000/post-additional",
     };
     return (

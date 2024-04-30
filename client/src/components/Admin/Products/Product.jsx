@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./Product.css";
 import FreshFruits from "./tabs/FreshFruits";
 import FreshVegetable from "./tabs/FreshVegetables";
@@ -8,7 +8,15 @@ import Quickpicks from "./tabs/Quickpicks";
 import Leafyvegetables from "./tabs/Leafyvegetables";
 
 const Product = () => {
-  const [activeTab, setActiveTab] = useState("freshfruits");
+  // Retrieve the active tab from localStorage or default to 'freshfruits'
+  const [activeTab, setActiveTab] = useState(
+    localStorage.getItem("activeTab") || "freshfruits",
+  );
+
+  useEffect(() => {
+    // Store the active tab in localStorage whenever it changes
+    localStorage.setItem("activeTab", activeTab);
+  }, [activeTab]);
 
   const renderSelectedComponent = () => {
     switch (activeTab) {
@@ -37,45 +45,39 @@ const Product = () => {
     <div className="services-container">
       <div className="tabs-container">
         <div
-          className={`tab ${activeTab === "freshfruits" && "active"}`}
+          className={`tab ${activeTab === "freshfruits" ? "active" : ""}`}
           onClick={() => handleTabClick("freshfruits")}
         >
-          {/* <img src={general} alt="" width={30}/> */}
           Fresh Fruits
         </div>
         <div
-          className={`tab ${activeTab === "freshvegetable" && "active"}`}
+          className={`tab ${activeTab === "freshvegetable" ? "active" : ""}`}
           onClick={() => handleTabClick("freshvegetable")}
         >
-          {/* <img src={denting} alt="" width={30}/> */}
           Fresh Vegetables
         </div>
         <div
-          className={`tab ${activeTab === "leafyvegetables" && "active"}`}
+          className={`tab ${activeTab === "leafyvegetables" ? "active" : ""}`}
           onClick={() => handleTabClick("leafyvegetables")}
         >
-          {/* <img src={denting} alt="" width={30}/> */}
           Leafy Vegetables
         </div>
         <div
-          className={`tab ${activeTab === "offers" && "active"}`}
+          className={`tab ${activeTab === "offers" ? "active" : ""}`}
           onClick={() => handleTabClick("offers")}
         >
-          {/* <img src={ac} alt="" width={30}/> */}
           Offers
         </div>
         <div
-          className={`tab ${activeTab === "quickpicks" && "active"}`}
+          className={`tab ${activeTab === "quickpicks" ? "active" : ""}`}
           onClick={() => handleTabClick("quickpicks")}
         >
-          {/* <img src={accident} alt="" width={30}/> */}
           Quick picks
         </div>
         <div
-          className={`tab ${activeTab === "additionals" && "active"}`}
+          className={`tab ${activeTab === "additionals" ? "active" : ""}`}
           onClick={() => handleTabClick("additionals")}
         >
-          {/* <img src={battery} alt="" width={30}/> */}
           Additionals
         </div>
       </div>

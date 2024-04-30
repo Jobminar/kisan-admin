@@ -1,8 +1,7 @@
 // FreshFruits.js
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import CreateOutlinedIcon from "@mui/icons-material/CreateOutlined";
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
-import { useNavigate } from "react-router-dom";
 import { Button } from "@mui/material";
 import EditFruitPopup from "./EditFruitPopup";
 import "./tabs.css";
@@ -17,12 +16,12 @@ const FreshFruits = () => {
   const closePopup = () => {
     setIsPopupOpen(false);
   };
-  const navigate = useNavigate();
+
   const [inventoryData, setInventoryData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
+  const fetched = useRef(false); // Ref to track if the fetchInventory has been called
   const [isPopupOpen, setIsPopupOpen] = useState(false);
-  const fetched = useRef(false);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedId, setSelectedId] = useState("");
   useEffect(() => {
@@ -90,15 +89,12 @@ const FreshFruits = () => {
       setInventoryData((prevData) =>
         prevData.filter((item) => item._id !== itemId),
       );
+      window.location.reload();
       alert("Item deleted successfully");
     } catch (error) {
       console.error("Error deleting item:", error);
       alert(`Error deleting item: ${error.message}`);
     }
-  };
-
-  const handleProduct = (item) => {
-    navigate("/productupdate", { state: { selectedProduct: item } });
   };
 
   return (
@@ -125,14 +121,12 @@ const FreshFruits = () => {
             </div>
           </div>
           <div className="edit-delete-buttons">
-            <div onClick={() => handleProduct(item)}>
-              <CreateOutlinedIcon />
-            </div>
             <div onClick={() => handleItemDelete(item._id)}>
               <DeleteOutlineOutlinedIcon />
             </div>
             <Button onClick={() => openPopup("freshFruits", item._id)}>
-              Edit Fruit
+              <CreateOutlinedIcon />
+              Edit Fruits
             </Button>
           </div>
         </div>

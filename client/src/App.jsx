@@ -1,24 +1,27 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo, lazy, Suspense } from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Header from "./components/Admin/Header/header";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import Inventory from "./components/Admin/Inventory/Inventory";
-import Product from "./components/Admin/Products/Product";
-import Users from "./components/Admin/Users/users";
-import Orders from "./components/Admin/Orders/orders";
-import Login from "./components/Admin/Login";
 import Footer from "./components/User/Footer";
-import ForgotPassword from "./components/Admin/ForgotPassword";
-import SignUp from "./components/Admin/Signup";
-import Shippingpolicy from "./components/User/shipping-policy";
-import Refundpolicy from "./components/User/refund-policy";
-import Returnexchange from "./components/User/return-exchange";
-import Privacypolicy from "./components/User/privacy-policy";
-import Termsconditions from "./components/User/terms-conditions";
-import Reports from "./components/Admin/reports";
-import All from "./All";
-import FruitList from "./Get";
+import SessionTimeout from "./Sessiontimeout";
 
-function App() {
+// Lazy load components
+const Inventory = lazy(() => import("./components/Admin/Inventory/Inventory"));
+const Product = lazy(() => import("./components/Admin/Products/Product"));
+const Users = lazy(() => import("./components/Admin/Users/users"));
+const Orders = lazy(() => import("./components/Admin/Orders/orders"));
+const Login = lazy(() => import("./components/Admin/Login"));
+const ForgotPassword = lazy(() => import("./components/Admin/ForgotPassword"));
+const SignUp = lazy(() => import("./components/Admin/Signup"));
+const ShippingPolicy = lazy(() => import("./components/User/ShippingPolicy"));
+const RefundPolicy = lazy(() => import("./components/User/Refundpolicy"));
+const ReturnExchange = lazy(() => import("./components/User/Returnexchange"));
+const PrivacyPolicy = lazy(() => import("./components/User/Privacypolicy"));
+const TermsConditions = lazy(() => import("./components/User/Termsconditions"));
+const Reports = lazy(() => import("./components/Admin/Reports"));
+const All = lazy(() => import("./All"));
+const FruitList = lazy(() => import("./Get"));
+
+const App = () => {
   const [isLoggedIn, setLoggedIn] = useState(false);
 
   useEffect(() => {
@@ -37,42 +40,149 @@ function App() {
 
   const handleLogout = () => {
     // Clear login status from sessionStorage
-    localStorage.removeItem("token")
+    localStorage.removeItem("token");
     sessionStorage.removeItem("isLoggedIn");
     setLoggedIn(false);
     // Additional logout logic if needed
   };
 
+  // Memoize header component to prevent unnecessary re-renders
+  const memoizedHeader = useMemo(
+    () => <Header isLoggedIn={isLoggedIn} onLogout={handleLogout} />,
+    [isLoggedIn],
+  );
+
   return (
     <>
       <BrowserRouter>
-        <Header isLoggedIn={isLoggedIn} onLogout={handleLogout} />
+        {memoizedHeader}
         <Routes>
-          {isLoggedIn ? (
-            <>
-              <Route path="/inventory" element={<Inventory />} />
-              <Route path="/products" element={<Product />} />
-              <Route path="/users" element={<Users />} />
-              <Route path="/orders" element={<Orders />} />
-              <Route path="/reports" element={<Reports />} />
-              <Route path="/all" element={<All/>} />
-              <Route path="/get" element={<FruitList />} />
-            </>
-          ) : (
-            <Route path="/" element={<Login onLogin={handleLogin} />} />
-          )}
-          <Route path="/forgot" element={<ForgotPassword />} />
-          <Route path="/signup" element={<SignUp />} />
-          <Route path="/shippingpolicy" element={<Shippingpolicy />} />
-          <Route path="/refund&cancellation" element={<Refundpolicy />} />
-          <Route path="/return&exchange" element={<Returnexchange />} />
-          <Route path="/privacypolicy" element={<Privacypolicy />} />
-          <Route path="/termsconditions" element={<Termsconditions />} />
+          <Route
+            path="/"
+            element={
+              <Suspense fallback={<div>Loading...</div>}>
+                <Login onLogin={handleLogin} />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/inventory"
+            element={
+              <Suspense fallback={<div>Loading...</div>}>
+                <Inventory />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/products"
+            element={
+              <Suspense fallback={<div>Loading...</div>}>
+                <Product />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/users"
+            element={
+              <Suspense fallback={<div>Loading...</div>}>
+                <Users />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/orders"
+            element={
+              <Suspense fallback={<div>Loading...</div>}>
+                <Orders />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/reports"
+            element={
+              <Suspense fallback={<div>Loading...</div>}>
+                <Reports />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/all"
+            element={
+              <Suspense fallback={<div>Loading...</div>}>
+                <All />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/get"
+            element={
+              <Suspense fallback={<div>Loading...</div>}>
+                <FruitList />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/forgot"
+            element={
+              <Suspense fallback={<div>Loading...</div>}>
+                <ForgotPassword />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/signup"
+            element={
+              <Suspense fallback={<div>Loading...</div>}>
+                <SignUp />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/shippingpolicy"
+            element={
+              <Suspense fallback={<div>Loading...</div>}>
+                <ShippingPolicy />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/refund&cancellation"
+            element={
+              <Suspense fallback={<div>Loading...</div>}>
+                <RefundPolicy />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/return&exchange"
+            element={
+              <Suspense fallback={<div>Loading...</div>}>
+                <ReturnExchange />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/privacypolicy"
+            element={
+              <Suspense fallback={<div>Loading...</div>}>
+                <PrivacyPolicy />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/termsconditions"
+            element={
+              <Suspense fallback={<div>Loading...</div>}>
+                <TermsConditions />
+              </Suspense>
+            }
+          />
         </Routes>
+        <SessionTimeout />
         <Footer />
       </BrowserRouter>
     </>
   );
-}
+};
 
 export default App;

@@ -1,15 +1,28 @@
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import CreateOutlinedIcon from "@mui/icons-material/CreateOutlined";
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
-import { useNavigate } from "react-router-dom";
+import { Button } from "@mui/material";
+import EditFruitPopup from "./EditFruitPopup";
 import "./tabs.css";
 
 const Leafyvegetables = () => {
-  const navigate = useNavigate();
+  const openPopup = (category, id) => {
+    setSelectedCategory(category);
+    setSelectedId(id);
+    setIsPopupOpen(true);
+  };
+
+  const closePopup = () => {
+    setIsPopupOpen(false);
+  };
+
   const [inventoryData, setInventoryData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
-  const fetched = useRef(false); // Ref to track if the fetchInventory has been called
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedId, setSelectedId] = useState("");
+  const fetched = useRef(false);
 
   useEffect(() => {
     if (fetched.current) {
@@ -61,7 +74,7 @@ const Leafyvegetables = () => {
     }
 
     try {
-      const deleteUrl = `http://localhost:4000/deletefruit/${itemId}`; // Use the item ID in the delete URL
+      const deleteUrl = `http://localhost:4000/deleteLeaf/${itemId}`; // Use the item ID in the delete URL
       const response = await fetch(deleteUrl, {
         method: "DELETE",
         headers: {
@@ -76,15 +89,12 @@ const Leafyvegetables = () => {
       setInventoryData((prevData) =>
         prevData.filter((item) => item._id !== itemId),
       );
+      window.location.reload();
       alert("Item deleted successfully");
     } catch (error) {
       console.error("Error deleting item:", error);
       alert(`Error deleting item: ${error.message}`);
     }
-  };
-
-  const handleProduct = (item) => {
-    navigate("/productupdate", { state: { selectedProduct: item } });
   };
 
   return (
@@ -111,17 +121,25 @@ const Leafyvegetables = () => {
             </div>
           </div>
           <div className="edit-delete-buttons">
-            <div onClick={() => handleProduct(item)}>
-              <CreateOutlinedIcon />
-            </div>
             <div onClick={() => handleItemDelete(item._id)}>
               <DeleteOutlineOutlinedIcon />
             </div>
+            <Button onClick={() => openPopup("leafyVegetables", item._id)}>
+              <CreateOutlinedIcon />
+              Edit Leafy-vegetables
+            </Button>
           </div>
         </div>
       ))}
       {loading && <p>Loading...</p>}
       {!hasMore && <p>No more items to load.</p>}
+      {isPopupOpen && (
+        <EditFruitPopup
+          onClose={closePopup}
+          category={selectedCategory}
+          id={selectedId}
+        />
+      )}
     </div>
   );
 };

@@ -27,16 +27,13 @@ const Contactus = () => {
       setLoading(true);
       console.log("Before submission - Form Data:", formData);
 
-      const response = await fetch(
-        `https://localhost:4000/contact-us`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(formData),
-        }
-      );
+      const response = await fetch(`https://localhost:4000/contact-us`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
 
       console.log("After submission - Server Response:", response);
 
