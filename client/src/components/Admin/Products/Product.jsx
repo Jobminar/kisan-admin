@@ -1,20 +1,20 @@
 import React, { useState, useEffect } from "react";
-import "./Product.css";
+import "./Product.css"; // Assuming this contains your styling for tabs
 import FreshFruits from "./tabs/FreshFruits";
 import FreshVegetable from "./tabs/FreshVegetables";
 import Offers from "./tabs/Offers";
 import Additionals from "./tabs/Additionals";
 import Quickpicks from "./tabs/Quickpicks";
 import Leafyvegetables from "./tabs/Leafyvegetables";
+import AdditionalCharges from "./tabs/AdditionalCharges";
+import HomeBanner from "./tabs/HomeBanner";
 
 const Product = () => {
-  // Retrieve the active tab from localStorage or default to 'freshfruits'
   const [activeTab, setActiveTab] = useState(
     localStorage.getItem("activeTab") || "freshfruits",
   );
 
   useEffect(() => {
-    // Store the active tab in localStorage whenever it changes
     localStorage.setItem("activeTab", activeTab);
   }, [activeTab]);
 
@@ -32,6 +32,10 @@ const Product = () => {
         return <Quickpicks />;
       case "additionals":
         return <Additionals />;
+      case "additionalCharges":
+        return <AdditionalCharges />;
+      case "homeBanner":
+        return <HomeBanner />;
       default:
         return null;
     }
@@ -79,6 +83,18 @@ const Product = () => {
           onClick={() => handleTabClick("additionals")}
         >
           Additionals
+        </div>
+        <div
+          className={`tab ${activeTab === "additionalCharges" ? "active" : ""}`}
+          onClick={() => handleTabClick("additionalCharges")}
+        >
+          Additional Charges
+        </div>
+        <div
+          className={`tab ${activeTab === "homeBanner" ? "active" : ""}`}
+          onClick={() => handleTabClick("homeBanner")}
+        >
+          Home Banner
         </div>
       </div>
       {renderSelectedComponent()}

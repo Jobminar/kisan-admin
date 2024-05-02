@@ -30,37 +30,57 @@ const Orders = () => {
 
   useEffect(() => {
     const fetchCartItems = async () => {
+      // Retrieve the token from local storage
+      const token = localStorage.getItem("token"); // Ensure 'token' is the key used when the token is stored
+
       try {
-        const response = await axios.get(
-          "http://localhost:4000/getorders"
-        );
+        const response = await axios.get("http://localhost:4000/getorders", {
+          headers: {
+            Authorization: `Bearer ${token}`, // Use the retrieved token here
+          },
+        });
+        console.log("Response data:", response.data); // Log the response data
         setCartItems(response.data);
       } catch (error) {
         console.error("Error fetching cart items:", error);
       }
     };
 
+    // Function to initiate data fetch
     fetchCartItems();
-    const inactivityTimer = setTimeout(() => {
+
+    // Setup the inactivity timer
+    let inactivityTimer = setTimeout(() => {
       toast.info("Reloading page to fetch new orders.", {
-        autoClose: 8000, // Set duration in milliseconds (2 seconds)
+        autoClose: 8000, // Notification closes after 8 seconds
       });
-      window.location.reload();
-    }, 60000);
+      window.location.reload(); // Reload the page to potentially fetch new data
+    }, 120000); // 120 seconds of inactivity timer
 
-    // Clear the timer when the component is unmounted or when there's user activity
-    const clearTimer = () => clearTimeout(inactivityTimer);
+    // Function to reset the inactivity timer on user activity
+    const resetTimer = () => {
+      clearTimeout(inactivityTimer);
+      inactivityTimer = setTimeout(() => {
+        toast.info("Reloading page to fetch new orders.", {
+          autoClose: 8000,
+        });
+        window.location.reload();
+      }, 120000); // Reset to 120 seconds after any detected activity
+    };
 
-    // Attach event listeners to detect user activity
-    document.addEventListener("mousemove", clearTimer);
-    document.addEventListener("keydown", clearTimer);
+    // Attach event listeners to detect user activity (mousemove and keydown)
+    document.addEventListener("mousemove", resetTimer);
+    document.addEventListener("keydown", resetTimer);
 
-    // Clean up the event listeners when the component is unmounted this is conatctus
+    // Cleanup function to remove event listeners and clear the timer
     return () => {
-      document.removeEventListener("mousemove", clearTimer);
-      document.removeEventListener("keydown", clearTimer);
+      clearTimeout(inactivityTimer); // Clear the current timer
+      document.removeEventListener("mousemove", resetTimer); // Remove listener for mouse movement
+      document.removeEventListener("keydown", resetTimer); // Remove listener for keyboard activity
     };
   }, []);
+
+  // Note: Dependencies array is empty, indicating this effect runs once on mount
 
   const extractBase64Data = (base64String) => {
     return base64String.substring("data:image/*;base64,".length);
@@ -70,7 +90,7 @@ const Orders = () => {
     try {
       // Display a confirmation dialog
       const isConfirmed = window.confirm(
-        `Are you sure you want to remove the order for ${item.itemName}?`
+        `Are you sure you want to remove the order for ${item.itemName}?`,
       );
 
       if (!isConfirmed) {
@@ -79,7 +99,7 @@ const Orders = () => {
 
       // Make a DELETE request to remove the item
       const response = await axios.delete(
-        `http://localhost:4000/orders/${orderId}`
+        `http://localhost:4000/orders/${orderId}`,
       );
 
       console.log("Item removed:", response.data);
@@ -95,96 +115,201 @@ const Orders = () => {
       console.error("Error removing item:", error);
     }
   };
-  //Logic for initiating refund
-  const initiateRefund = async (orderId, item, userData) => {
+  //Initiating Refund for customer__________//
+
+  const initiateRefund = async (orderId, item) => {
+    if (!item) {
+      alert("No item data available for refund.");
+      return;
+    }
+
+    const isConfirmed = window.confirm(`Confirm refund for ${item.itemName}?`);
+    if (!isConfirmed) return;
+
     try {
-      if (!item) {
-        console.error("Item is undefined in initiateRefund");
-        return;
-      }
-      // Display a confirmation dialog
-      const isConfirmed = window.confirm(
-        `Are you sure you want to initiate a refund for ${item.itemName}?`
+      // Get the paymentId from the item object or wherever it is stored
+      const paymentId = item.paymentId;
+
+      const response = await axios.post(
+        `https://api.razorpay.com/v1/payments/${paymentId}/refund`,
+        {
+          amount: item.price * 100, // Convert amount to the smallest currency unit
+        },
+        {
+          auth: {
+            username: "rzp_live_pbJYaEW4zKJXLH",
+            password: "97ICNOHljIFUQwibZmRXvWv",
+          },
+          headers: {
+            "Content-Type": "application/json",
+          },
+        },
       );
 
-      if (!isConfirmed) {
-        return; // Do nothing if the user cancels the confirmation
+      if (response.status === 200) {
+        alert(`Refund initiated for ${item.itemName}.`);
+        handleRefundSuccess(orderId, item);
+      } else {
+        throw new Error("Refund initiation failed");
       }
-
-      const options = {
-        key: "rzp_test_F0NFXQAieRykHN",
-        amount: (item.price * 100).toString(),
-        currency: "INR",
-        name: "Kisan mart",
-        payment_capture: "1",
-        capture_after: "30",
-        description: `Refund Transaction for ${item.itemName}`,
-        image: { Kissanlogo },
-
-        handler: async (res) => {
-          console.log(res);
-          // Check if payment was successful before initiating refund
-          if (res.razorpay_payment_id) {
-            await handleRefundSuccess(orderId, item);
-          }
-        },
-        prefill: {
-          name: userData ? userData.userName : "Piyush Garg",
-          email: "youremail@example.com", // You can use userData.email if available
-          contact: userData ? userData.phoneNumber : "9999999999",
-        },
-        notes: {
-          address: "Razorpay Corporate Office",
-          category: item.category,
-          units: item.units,
-          costPerUnit: item.costPerUnit,
-          discount: item.discount,
-          description: item.description,
-          userId: item.userId,
-          paymentMethod: item.payment,
-          count: item.count,
-          orderId: orderId,
-        },
-        theme: {
-          color: "#3399cc",
-        },
-      };
-
-      const rzpay = new Razorpay(options);
-      rzpay.open();
     } catch (error) {
+      alert("No enough balance refund. Please try again or contact support.");
+      handleRefundError(error);
       console.error("Error initiating refund:", error);
+      // RazorpayCheckout(item);
+      processRefund(item.paymentId, item.price);
+      if (error.response && error.response.data) {
+        const apiErrorMessage =
+          error.response.data.error || "Refund initiation failed";
+        handleRefundError(apiErrorMessage);
+      } else {
+        alert("Error during refund. Please try again or contact support.");
+      }
+    }
+  };
+  const handleRefundError = (errorMessage) => {
+    if (errorMessage) {
+      // Open Razorpay dashboard in a new tab for the user to add funds
+      window.open(
+        "https://accounts.razorpay.com/auth/?redirecturl=https%3A%2F%2Fdashboard.razorpay.com&auth_intent=login",
+        "_blank",
+      );
+    } else {
+      // Handle other errors
+      alert(errorMessage);
     }
   };
 
+  //   if (!item || !item.razorpayDetails) {
+  //     alert("No item data available for refund.");
+  //     return;
+  //   }
+
+  //   const isConfirmed = window.confirm(`Confirm refund for ${item.itemName}?`);
+  //   if (!isConfirmed) return;
+
+  //   try {
+  //     const response = await axios.post(
+  //       "http://localhost:4000/refund",
+  //       {
+  //         paymentId: item.razorpayDetails.id,
+  //         amount: item.price * 100, // Send amount in the smallest currency unit (e.g., paisa for INR)
+  //         upi_details: {
+  //           payer_account_type: item.razorpayDetails.payer_account_type,
+  //           vpa: item.razorpayDetails.vpa,
+  //           wallet: item.razorpayDetails.wallet,
+  //         },
+  //       },
+  //       {
+  //         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+  //       },
+  //     );
+
+  //     if (response.data.success) {
+  //       alert(`Refund initiated for ${item.itemName}.`);
+  //       handleRefundSuccess(orderId, item);
+  //     } else {
+  //       throw new Error(response.data.message || "Refund initiation failed");
+  //     }
+  //   } catch (error) {
+  //     console.error("Error initiating refund:", error);
+  //     if (error.response && error.response.data) {
+  //       const apiErrorMessage =
+  //         error.response.data.error || "Refund initiation failed";
+  //       if (apiErrorMessage.includes("Insufficient balance")) {
+  //         alert("Insufficient balance. Opening Razorpay to add funds.");
+  //         RazorpayCheckout(item);
+  //       } else {
+  //         alert(apiErrorMessage);
+  //       }
+  //     } else {
+  //       alert("Error during refund. Please try again or contact support.");
+  //     }
+  //   }
+  // };
+  const processRefund = async (paymentId, amount) => {
+    try {
+      const response = await axios.post("http://localhost:4000/refund", {
+        paymentId: paymentId,
+        amount: amount,
+      });
+
+      // Handle the refund response
+      if (response.data.success) {
+        alert("Refund initiated successfully");
+        // Handle refund success
+      } else {
+        alert("Failed to initiate refund");
+        // Handle refund failure
+      }
+    } catch (error) {
+      console.error("Error processing refund:", error);
+      handleRefundError(error);
+      // Handle error
+    }
+  };
+  // const RazorpayCheckout = (item) => {
+  //   if (!item || !item.razorpayDetails) {
+  //     console.error("razorpayDetails not found within item object");
+  //     return;
+  //   }
+
+  //   const { razorpayDetails } = item;
+
+  //   const options = {
+  //     key: "rzp_live_pbJYaEW4zKJXLH", // Replace with your actual Razorpay Key ID
+  //     amount: razorpayDetails.amount,
+  //     currency: razorpayDetails.currency,
+  //     name: "The Kissan Mart",
+  //     description: "Payment Request",
+  //     image: Kissanlogo, // Replace with a valid URL to your logo
+  //     order_id: razorpayDetails.orderId, // Use the order ID from razorpayDetails
+  //     handler: function (response) {
+  //       alert("Payment successful: " + response.razorpay_payment_id);
+  //       // Handle successful payment here
+  //     },
+  //     prefill: {
+  //       name: razorpayDetails.vpa.split("@")[0],
+  //       email: razorpayDetails.email,
+  //       contact: razorpayDetails.contact,
+  //       vpa: razorpayDetails.vpa,
+  //     },
+  //     notes: razorpayDetails.notes,
+  //     theme: {
+  //       color: "#F37254",
+  //     },
+  //   };
+
+  //   const rzp1 = new Razorpay(options);
+  //   rzp1.on("payment.failed", function (response) {
+  //     alert("Payment failed: " + response.error.description);
+  //     // Handle payment failure here
+  //   });
+
+  //   rzp1.open();
+  // };
+
   const handleRefundSuccess = async (orderId, item) => {
     try {
-      // Make a POST request to update the order status to "refunded"
+      const token = localStorage.getItem("token");
       const response = await axios.put(
-        "http://localhost:4000/orderId/status",
+        `http://localhost:4000/orders/${orderId}/status`,
         {
-          orderId: orderId,
           newOrderStatus: "refunded",
-        }
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
       );
 
-      console.log("Order status updated:", response.data);
-
-      // Emit socket event after a successful response
       if (response.data) {
-        console.log("Before socket emission");
-      //   const successMessage = `Refund processed successfully for ${item.itemName}. Price: ${item.price}, Units: ${item.units}, Discount: ${item.discount}`;
-      //   socket.emit("successMessage", {
-      //     userId: item.userId,
-      //     message: successMessage,
-        // });
-        console.log("Refund Success Message Sent:", successMessage);
-
-        // Log a message after sending the success message
-        console.log("sendMessage after refund success");
+        const successMessage = `Refund successful for ${item.itemName}.`;
+        toast.success(successMessage);
+        console.log("Order status updated:", response.data);
       }
     } catch (error) {
       console.error("Error updating order status:", error);
+      toast.error("Failed to update order status.");
     }
   };
 
@@ -192,46 +317,59 @@ const Orders = () => {
     try {
       // Display a confirmation dialog
       const isConfirmed = window.confirm(
-        `Are you sure you want to mark the order for ${item.itemName} as delivered?`
+        `Are you sure you want to mark the order for ${item.itemName} as delivered?`,
       );
 
       if (!isConfirmed) {
         return; // Do nothing if the user cancels the confirmation
       }
 
+      // Retrieve the token from local storage
+      const token = localStorage.getItem("token");
+      if (!token) {
+        console.error("No token found, authorization is required");
+        return;
+      }
+
       const response = await axios.put(
-        "http://localhost:4000/orderId/status",
+        `http://localhost:4000/orders/${orderId}/status`,
         {
-          orderId: orderId,
           newOrderStatus: "delivered",
-        }
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`, // Include the Authorization header with the Bearer token
+          },
+        },
       );
 
       console.log("Order status updated:", response.data);
 
-      // Emit socket event after successful response
+      // Check if the response is successful and if it is, proceed to log success
       if (response.data) {
-        // const successMessage = `Order initiated for delivery successfully for ${item.count} Number of ${item.itemName}. Price: ${item.price}, Units: ${item.units}, Discount: ${item.discount}`;
-        // socket.emit("successMessage", {
-        //   userId: item.userId,
-        //   message: successMessage,
-        // });
+        const successMessage = `Order marked as delivered for ${item.itemName}. Price: ${item.price}, Units: ${item.units}, Discount: ${item.discount}`;
         console.log("Delivery Success Message Sent:", successMessage);
-
-        // Log a message after sending the success message
-        console.log("sendMessage after delivery success");
+        // Optionally, display a success message to the user
+        alert(successMessage);
       }
     } catch (error) {
       console.error("Error updating order status:", error);
+      // Optionally, inform the user about the error
+      alert(`Failed to update status for ${item.itemName}: ${error.message}`);
     }
   };
+
   //fetching user data_____________________________________________________________
   const fetchUserData = async (userId) => {
+    // Retrieve the token from local storage
+    const token = localStorage.getItem("token"); // Ensure 'token' is the key used when the token is stored
+
     try {
-      const response = await fetch("http://localhost:4000/api/users", {
+      const response = await fetch("http://localhost:4000/getuser", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // Include the Authorization header with the Bearer token
         },
         body: JSON.stringify({ userId }),
       });
@@ -249,7 +387,7 @@ const Orders = () => {
       return userData;
     } catch (error) {
       console.error("Error fetching user details:", error);
-      throw error; // Throw the error to handle it in the calling code
+      throw error; // Propagate the error to be possibly caught by calling code
     }
   };
 
@@ -274,7 +412,7 @@ const Orders = () => {
               {item.itemImage && (
                 <img
                   src={`data:image/*;base64,${extractBase64Data(
-                    item.itemImage
+                    item.itemImage,
                   )}`}
                   alt="Item Image"
                 />
@@ -323,7 +461,7 @@ const Orders = () => {
               </button>
             )}
             <button className="popup-button" onClick={() => openPopup(item)}>
-              Open Popup
+              Order Details
             </button>
           </div>
         ))}

@@ -62,16 +62,16 @@ const EditFruitPopup = ({ onClose, category, id }) => {
           apiUrl = `http://localhost:4000/update/veg/${id}`;
           break;
         case "leafyVegitables":
-          apiUrl = `http://localhost:4000/exotic-fruits/${id}`;
+          apiUrl = `http://localhost:4000/update/leaf/${id}`;
           break;
         case "offerZone":
-          apiUrl = `http://localhost:4000/offer/${id}`;
+          apiUrl = `http://localhost:4000/update/offer/${id}`;
           break;
         case "additionals":
-          apiUrl = `http://localhost:4000/additional/${id}`;
+          apiUrl = `http://localhost:4000/update/add/${id}`;
           break;
         case "quickPicks":
-          apiUrl = `http://localhost:4000/quick/${id}`;
+          apiUrl = `http://localhost:4000/update/quick/${id}`;
           break;
         default:
           throw new Error("Invalid category");
