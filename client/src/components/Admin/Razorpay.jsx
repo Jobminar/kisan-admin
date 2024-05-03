@@ -1,4 +1,4 @@
-const Reports = () => {
+const Razorpay = () => {
   return (
     <>
       <div
@@ -26,4 +26,4 @@ const Reports = () => {
   );
 };
 
-export default Reports;
+export default Razorpay;

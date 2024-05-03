@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Header from "./components/Admin/Header/header";
 import Footer from "./components/User/Footer";
 import SessionTimeout from "./Sessiontimeout";
+import Razorpay from "./components/Admin/Razorpay";
 
 // Lazy load components
 const Inventory = lazy(() => import("./components/Admin/Inventory/Inventory"));
@@ -17,7 +18,7 @@ const Refundpolicy = lazy(() => import("./components/User/Refundpolicy"));
 const Returnexchange = lazy(() => import("./components/User/Returnexchange"));
 const Privacypolicy = lazy(() => import("./components/User/Privacypolicy"));
 const Termsconditions = lazy(() => import("./components/User/Termsconditions"));
-const Reports = lazy(() => import("./components/Admin/Reports"));
+
 const All = lazy(() => import("./All"));
 const FruitList = lazy(() => import("./Get"));
 //lazy loading
@@ -101,7 +102,7 @@ const App = () => {
             path="/reports"
             element={
               <Suspense fallback={<div>Loading...</div>}>
-                <Reports />
+                <Razorpay />
               </Suspense>
             }
           />
