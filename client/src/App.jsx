@@ -12,11 +12,11 @@ const Orders = lazy(() => import("./components/Admin/Orders/orders"));
 const Login = lazy(() => import("./components/Admin/Login"));
 const ForgotPassword = lazy(() => import("./components/Admin/ForgotPassword"));
 const SignUp = lazy(() => import("./components/Admin/Signup"));
-const ShippingPolicy = lazy(() => import("./components/User/ShippingPolicy"));
-const RefundPolicy = lazy(() => import("./components/User/Refundpolicy"));
-const ReturnExchange = lazy(() => import("./components/User/Returnexchange"));
-const PrivacyPolicy = lazy(() => import("./components/User/Privacypolicy"));
-const TermsConditions = lazy(() => import("./components/User/Termsconditions"));
+const Shippingpolicy = lazy(() => import("./components/User/Shippingpolicy"));
+const Refundpolicy = lazy(() => import("./components/User/Refundpolicy"));
+const Returnexchange = lazy(() => import("./components/User/Returnexchange"));
+const Privacypolicy = lazy(() => import("./components/User/Privacypolicy"));
+const Termsconditions = lazy(() => import("./components/User/Termsconditions"));
 const Reports = lazy(() => import("./components/Admin/Reports"));
 const All = lazy(() => import("./All"));
 const FruitList = lazy(() => import("./Get"));
@@ -141,7 +141,7 @@ const App = () => {
             path="/shippingpolicy"
             element={
               <Suspense fallback={<div>Loading...</div>}>
-                <ShippingPolicy />
+                <Shippingpolicy />
               </Suspense>
             }
           />
@@ -149,7 +149,7 @@ const App = () => {
             path="/refund&cancellation"
             element={
               <Suspense fallback={<div>Loading...</div>}>
-                <RefundPolicy />
+                <Refundpolicy />
               </Suspense>
             }
           />
@@ -157,7 +157,7 @@ const App = () => {
             path="/return&exchange"
             element={
               <Suspense fallback={<div>Loading...</div>}>
-                <ReturnExchange />
+                <Returnexchange />
               </Suspense>
             }
           />
@@ -165,7 +165,7 @@ const App = () => {
             path="/privacypolicy"
             element={
               <Suspense fallback={<div>Loading...</div>}>
-                <PrivacyPolicy />
+                <Privacypolicy />
               </Suspense>
             }
           />
@@ -173,7 +173,7 @@ const App = () => {
             path="/termsconditions"
             element={
               <Suspense fallback={<div>Loading...</div>}>
-                <TermsConditions />
+                <Termsconditions />
               </Suspense>
             }
           />
