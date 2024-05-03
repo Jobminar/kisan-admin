@@ -20,7 +20,7 @@ const Termsconditions = lazy(() => import("./components/User/Termsconditions"));
 const Reports = lazy(() => import("./components/Admin/Reports"));
 const All = lazy(() => import("./All"));
 const FruitList = lazy(() => import("./Get"));
-
+//lazy loading
 const App = () => {
   const [isLoggedIn, setLoggedIn] = useState(false);
 
