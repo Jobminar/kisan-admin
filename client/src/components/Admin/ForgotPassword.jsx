@@ -60,7 +60,7 @@ const ForgotPassword = () => {
   };
 
   const sendingApi = (otp) => {
-    const apiUrl = "http://localhost:4000/otp/save";
+    const apiUrl = "https://kisanmart.onrender.com/otp/save";
     const requestBody = {
       email: email,
       otp: otp,
@@ -96,7 +96,7 @@ const ForgotPassword = () => {
   // Function to fetch OTP from the backend
   const fetchData = () => {
     axios
-      .get(`http://localhost:4000/otp/${email}`)
+      .get(`https://kisanmart.onrender.com/otp/${email}`)
       .then((response) => {
         setOtp(response.data.otp);
       })
@@ -107,7 +107,7 @@ const ForgotPassword = () => {
 
   // Function to update password
   const setNewPasswordApi = () => {
-    const apiUrl = "http://localhost:4000/update-password";
+    const apiUrl = "https://kisanmart.onrender.com/update-password";
     const requestBody = {
       email: email,
       newPassword: newPassword,

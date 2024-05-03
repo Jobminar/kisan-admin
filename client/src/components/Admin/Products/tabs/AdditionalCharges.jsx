@@ -18,11 +18,14 @@ const AdditionalCharges = () => {
     try {
       setLoading(true);
       const token = localStorage.getItem("token");
-      const response = await axios.get("http://localhost:4000/get-charges", {
-        headers: {
-          Authorization: `Bearer ${token}`,
+      const response = await axios.get(
+        "https://kisanmart.onrender.com/get-charges",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         },
-      });
+      );
       setCharges(response.data);
     } catch (error) {
       setError("Error fetching charges");
@@ -38,7 +41,7 @@ const AdditionalCharges = () => {
       let response;
       if (charges._id) {
         response = await axios.patch(
-          "http://localhost:4000/update-charges",
+          "https://kisanmart.onrender.com/update-charges",
           newCharge,
           {
             headers: {
@@ -48,7 +51,7 @@ const AdditionalCharges = () => {
         );
       } else {
         response = await axios.post(
-          "http://localhost:4000/post-charges",
+          "https://kisanmart.onrender.com/post-charges",
           newCharge,
           {
             headers: {
@@ -58,6 +61,7 @@ const AdditionalCharges = () => {
         );
       }
       setCharges(response.data.charge);
+      window.location.reload();
       setNewCharge({ deliveryCharges: "", handlingCharges: "" }); // Reset the form
     } catch (error) {
       setError("Error adding/updating charge");

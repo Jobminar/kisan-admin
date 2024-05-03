@@ -56,22 +56,22 @@ const EditFruitPopup = ({ onClose, category, id }) => {
     try {
       switch (category) {
         case "freshFruits":
-          apiUrl = `http://localhost:4000/fruits/${id}`;
+          apiUrl = `https://kisanmart.onrender.com/fruits/${id}`;
           break;
         case "freshVegitables":
-          apiUrl = `http://localhost:4000/update/veg/${id}`;
+          apiUrl = `https://kisanmart.onrender.com/update/veg/${id}`;
           break;
         case "leafyVegitables":
-          apiUrl = `http://localhost:4000/update/leaf/${id}`;
+          apiUrl = `https://kisanmart.onrender.com/update/leaf/${id}`;
           break;
         case "offerZone":
-          apiUrl = `http://localhost:4000/update/offer/${id}`;
+          apiUrl = `https://kisanmart.onrender.com/update/offer/${id}`;
           break;
         case "additionals":
-          apiUrl = `http://localhost:4000/update/add/${id}`;
+          apiUrl = `https://kisanmart.onrender.com/update/add/${id}`;
           break;
         case "quickPicks":
-          apiUrl = `http://localhost:4000/update/quick/${id}`;
+          apiUrl = `https://kisanmart.onrender.com/update/quick/${id}`;
           break;
         default:
           throw new Error("Invalid category");

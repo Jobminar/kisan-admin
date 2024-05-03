@@ -50,15 +50,16 @@ const Inventory = () => {
 
   const getApiUrl = () => {
     const apiEndpoints = {
-      freshVegetables: "http://localhost:4000/post-vegetables",
-      freshFruits: "http://localhost:4000/post-fruits",
-      leafyVegetables: "http://localhost:4000/post-leaf",
-      offerZone: "http://localhost:4000/post-offer",
-      quickPicks: "http://localhost:4000/post-quick",
-      additionals: "http://localhost:4000/post-additional",
+      freshVegetables: "https://kisanmart.onrender.com/post-vegetables",
+      freshFruits: "https://kisanmart.onrender.com/post-fruits",
+      leafyVegetables: "https://kisanmart.onrender.com/post-leaf",
+      offerZone: "https://kisanmart.onrender.com/post-offer",
+      quickPicks: "https://kisanmart.onrender.com/post-quick",
+      additionals: "https://kisanmart.onrender.com/post-additional",
     };
     return (
-      apiEndpoints[formData.category] || "http://localhost:4000/additem/default"
+      apiEndpoints[formData.category] ||
+      "https://kisanmart.onrender.com/additem/default"
     );
   };
 

@@ -34,11 +34,14 @@ const Orders = () => {
       const token = localStorage.getItem("token"); // Ensure 'token' is the key used when the token is stored
 
       try {
-        const response = await axios.get("http://localhost:4000/getorders", {
-          headers: {
-            Authorization: `Bearer ${token}`, // Use the retrieved token here
+        const response = await axios.get(
+          "https://kisanmart.onrender.com/getorders",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`, // Use the retrieved token here
+            },
           },
-        });
+        );
         console.log("Response data:", response.data); // Log the response data
         setCartItems(response.data);
       } catch (error) {
@@ -55,7 +58,7 @@ const Orders = () => {
         autoClose: 8000, // Notification closes after 8 seconds
       });
       window.location.reload(); // Reload the page to potentially fetch new data
-    }, 120000); // 120 seconds of inactivity timer
+    }, 30000); // 30 seconds of inactivity timer
 
     // Function to reset the inactivity timer on user activity
     const resetTimer = () => {
@@ -65,7 +68,7 @@ const Orders = () => {
           autoClose: 8000,
         });
         window.location.reload();
-      }, 120000); // Reset to 120 seconds after any detected activity
+      }, 30000); // Reset to 30 seconds after any detected activity
     };
 
     // Attach event listeners to detect user activity (mousemove and keydown)
@@ -99,7 +102,7 @@ const Orders = () => {
 
       // Make a DELETE request to remove the item
       const response = await axios.delete(
-        `http://localhost:4000/orders/${orderId}`,
+        `https://kisanmart.onrender.com/orders/${orderId}`,
       );
 
       console.log("Item removed:", response.data);
@@ -190,7 +193,7 @@ const Orders = () => {
 
   //   try {
   //     const response = await axios.post(
-  //       "http://localhost:4000/refund",
+  //       "https://kisanmart.onrender.com/refund",
   //       {
   //         paymentId: item.razorpayDetails.id,
   //         amount: item.price * 100, // Send amount in the smallest currency unit (e.g., paisa for INR)
@@ -229,10 +232,13 @@ const Orders = () => {
   // };
   const processRefund = async (paymentId, amount) => {
     try {
-      const response = await axios.post("http://localhost:4000/refund", {
-        paymentId: paymentId,
-        amount: amount,
-      });
+      const response = await axios.post(
+        "https://kisanmart.onrender.com/refund",
+        {
+          paymentId: paymentId,
+          amount: amount,
+        },
+      );
 
       // Handle the refund response
       if (response.data.success) {
@@ -293,7 +299,7 @@ const Orders = () => {
     try {
       const token = localStorage.getItem("token");
       const response = await axios.put(
-        `http://localhost:4000/orders/${orderId}/status`,
+        `https://kisanmart.onrender.com/orders/${orderId}/status`,
         {
           newOrderStatus: "refunded",
         },
@@ -332,7 +338,7 @@ const Orders = () => {
       }
 
       const response = await axios.put(
-        `http://localhost:4000/orders/${orderId}/status`,
+        `https://kisanmart.onrender.com/orders/${orderId}/status`,
         {
           newOrderStatus: "delivered",
         },
@@ -365,7 +371,7 @@ const Orders = () => {
     const token = localStorage.getItem("token"); // Ensure 'token' is the key used when the token is stored
 
     try {
-      const response = await fetch("http://localhost:4000/getuser", {
+      const response = await fetch("https://kisanmart.onrender.com/getuser", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

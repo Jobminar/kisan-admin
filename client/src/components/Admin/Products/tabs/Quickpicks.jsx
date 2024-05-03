@@ -33,7 +33,7 @@ const Quickpicks = () => {
       if (loading || !hasMore) return;
       setLoading(true);
       const token = localStorage.getItem("token");
-      const apiUrl = `http://localhost:4000/get-quick`;
+      const apiUrl = `https://kisanmart.onrender.com/get-quick`;
 
       try {
         const response = await fetch(apiUrl, {
@@ -73,7 +73,7 @@ const Quickpicks = () => {
     }
 
     try {
-      const deleteUrl = `http://localhost:4000/deleteQuick/${itemId}`; // Use the item ID in the delete URL
+      const deleteUrl = `https://kisanmart.onrender.com/deleteQuick/${itemId}`; // Use the item ID in the delete URL
       const response = await fetch(deleteUrl, {
         method: "DELETE",
         headers: {

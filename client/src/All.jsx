@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
 const CreateFruitForm = () => {
   const [formData, setFormData] = useState({
-    category: '',
-    itemname: '',
-    units: '',
-    costPerUnit: '',
-    discount: '',
-    description: '',
+    category: "",
+    itemname: "",
+    units: "",
+    costPerUnit: "",
+    discount: "",
+    description: "",
     itemImage: null,
   });
 
@@ -28,48 +28,50 @@ const CreateFruitForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       if (!token) {
-        throw new Error('Authentication token not found');
+        throw new Error("Authentication token not found");
       }
-  
+
       // Check if any mandatory fields are empty
       for (const key in formData) {
-        if (formData.hasOwnProperty(key) && formData[key] === '') {
+        if (formData.hasOwnProperty(key) && formData[key] === "") {
           throw new Error(`Please fill in all fields (${key})`);
         }
       }
-  
+
       const formDataToSend = new FormData();
-      formDataToSend.append('category', formData.category);
-      formDataToSend.append('itemname', formData.itemname);
-      formDataToSend.append('units', formData.units);
-      formDataToSend.append('costPerUnit', formData.costPerUnit);
-      formDataToSend.append('discount', formData.discount);
-      formDataToSend.append('description', formData.description);
-      formDataToSend.append('itemImage', formData.itemImage);
-  
-      const response = await fetch('http://localhost:4000/post-fruit', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
+      formDataToSend.append("category", formData.category);
+      formDataToSend.append("itemname", formData.itemname);
+      formDataToSend.append("units", formData.units);
+      formDataToSend.append("costPerUnit", formData.costPerUnit);
+      formDataToSend.append("discount", formData.discount);
+      formDataToSend.append("description", formData.description);
+      formDataToSend.append("itemImage", formData.itemImage);
+
+      const response = await fetch(
+        "https://kisanmart.onrender.com/post-fruit",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          body: formDataToSend,
         },
-        body: formDataToSend,
-      });
+      );
       if (!response.ok) {
-        throw new Error('Network response was not ok');
+        throw new Error("Network response was not ok");
       }
-      
+
       // Show success message
-      alert('Item added successfully');
-  
+      alert("Item added successfully");
+
       // Optionally, you can handle success response here (e.g., redirect to another page)
     } catch (error) {
-      console.error('Error adding fruit:', error);
+      console.error("Error adding fruit:", error);
       // Optionally, you can handle error response here (e.g., show an error message)
     }
   };
-  
 
   return (
     <div>

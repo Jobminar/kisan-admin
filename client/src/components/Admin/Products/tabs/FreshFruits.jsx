@@ -34,7 +34,7 @@ const FreshFruits = () => {
       if (loading || !hasMore) return;
       setLoading(true);
       const token = localStorage.getItem("token");
-      const apiUrl = `http://localhost:4000/get-fruits`;
+      const apiUrl = `https://kisanmart.onrender.com/get-fruits`;
 
       try {
         const response = await fetch(apiUrl, {
@@ -74,7 +74,7 @@ const FreshFruits = () => {
     }
 
     try {
-      const deleteUrl = `http://localhost:4000/deletefruit/${itemId}`;
+      const deleteUrl = `https://kisanmart.onrender.com/deletefruit/${itemId}`;
       const response = await fetch(deleteUrl, {
         method: "DELETE",
         headers: {

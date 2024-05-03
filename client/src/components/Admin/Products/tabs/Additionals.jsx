@@ -33,7 +33,7 @@ const Additionals = () => {
       if (loading || !hasMore) return;
       setLoading(true);
       const token = localStorage.getItem("token");
-      const apiUrl = `http://localhost:4000/get-additional`;
+      const apiUrl = `https://kisanmart.onrender.com/get-additional`;
 
       try {
         const response = await fetch(apiUrl, {
@@ -73,7 +73,7 @@ const Additionals = () => {
     }
 
     try {
-      const deleteUrl = `http://localhost:4000/deletefruit/${itemId}`; // Use the item ID in the delete URL
+      const deleteUrl = `https://kisanmart.onrender.com/deletefruit/${itemId}`; // Use the item ID in the delete URL
       const response = await fetch(deleteUrl, {
         method: "DELETE",
         headers: {
@@ -89,6 +89,7 @@ const Additionals = () => {
         prevData.filter((item) => item._id !== itemId),
       );
       alert("Item deleted successfully");
+      window.location.reload();
     } catch (error) {
       console.error("Error deleting item:", error);
       alert(`Error deleting item: ${error.message}`);

@@ -6,19 +6,22 @@ import "./Signup.css"; // Import your custom CSS for styling
 import logo from "../../assets/images/Kissanlogo.png";
 
 const SignUp = () => {
-  const [phone, setPhone] = useState('');
-  const [password, setPassword] = useState('');
+  const [phone, setPhone] = useState("");
+  const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
   const handleSignup = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:4000/admin/signup', { phone, password });
+      const response = await axios.post(
+        "https://kisanmart.onrender.com/admin/signup",
+        { phone, password },
+      );
       console.log(response.data.message);
       Swal.fire({
         icon: "success",
         title: "Signup",
-        text: "Signup successfully completed"
+        text: "Signup successfully completed",
       });
       navigate("/");
     } catch (error) {
@@ -26,7 +29,7 @@ const SignUp = () => {
       Swal.fire({
         icon: "error",
         title: "Failed to Signup",
-        text: "Please try again later"
+        text: "Please try again later",
       });
     }
   };
