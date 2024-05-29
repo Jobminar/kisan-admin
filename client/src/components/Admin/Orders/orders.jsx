@@ -35,7 +35,7 @@ const Orders = () => {
 
       try {
         const response = await axios.get(
-          "https://kisanmart.onrender.com/getorders",
+          "https://kisan-be-odvc.onrender.com/getorders",
           {
             headers: {
               Authorization: `Bearer ${token}`, // Use the retrieved token here
@@ -102,7 +102,7 @@ const Orders = () => {
 
       // Make a DELETE request to remove the item
       const response = await axios.delete(
-        `https://kisanmart.onrender.com/orders/${orderId}`,
+        `https://kisan-be-odvc.onrender.com/orders/${orderId}`,
       );
 
       console.log("Item removed:", response.data);
@@ -193,7 +193,7 @@ const Orders = () => {
 
   //   try {
   //     const response = await axios.post(
-  //       "https://kisanmart.onrender.com/refund",
+  //       "https://kisan-be-odvc.onrender.com/refund",
   //       {
   //         paymentId: item.razorpayDetails.id,
   //         amount: item.price * 100, // Send amount in the smallest currency unit (e.g., paisa for INR)
@@ -233,7 +233,7 @@ const Orders = () => {
   const processRefund = async (paymentId, amount) => {
     try {
       const response = await axios.post(
-        "https://kisanmart.onrender.com/refund",
+        "https://kisan-be-odvc.onrender.com/refund",
         {
           paymentId: paymentId,
           amount: amount,
@@ -299,7 +299,7 @@ const Orders = () => {
     try {
       const token = localStorage.getItem("token");
       const response = await axios.put(
-        `https://kisanmart.onrender.com/orders/${orderId}/status`,
+        `https://kisan-be-odvc.onrender.com/orders/${orderId}/status`,
         {
           newOrderStatus: "refunded",
         },
@@ -338,7 +338,7 @@ const Orders = () => {
       }
 
       const response = await axios.put(
-        `https://kisanmart.onrender.com/orders/${orderId}/status`,
+        `https://kisan-be-odvc.onrender.com/orders/${orderId}/status`,
         {
           newOrderStatus: "delivered",
         },
@@ -371,14 +371,17 @@ const Orders = () => {
     const token = localStorage.getItem("token"); // Ensure 'token' is the key used when the token is stored
 
     try {
-      const response = await fetch("https://kisanmart.onrender.com/getuser", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`, // Include the Authorization header with the Bearer token
+      const response = await fetch(
+        "https://kisan-be-odvc.onrender.com/getuser",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`, // Include the Authorization header with the Bearer token
+          },
+          body: JSON.stringify({ userId }),
         },
-        body: JSON.stringify({ userId }),
-      });
+      );
 
       if (!response.ok) {
         throw new Error("Error fetching user details");

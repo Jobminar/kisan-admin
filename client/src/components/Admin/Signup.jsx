@@ -14,7 +14,7 @@ const SignUp = () => {
     e.preventDefault();
     try {
       const response = await axios.post(
-        "https://kisanmart.onrender.com/admin/signup",
+        "https://kisan-be-odvc.onrender.com/admin/signup",
         { phone, password },
       );
       console.log(response.data.message);

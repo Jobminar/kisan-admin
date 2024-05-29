@@ -60,7 +60,7 @@ const ForgotPassword = () => {
   };
 
   const sendingApi = (otp) => {
-    const apiUrl = "https://kisanmart.onrender.com/otp/save";
+    const apiUrl = "https://kisan-be-odvc.onrender.com/otp/save";
     const requestBody = {
       email: email,
       otp: otp,
@@ -86,7 +86,7 @@ const ForgotPassword = () => {
       .catch((error) => {
         handleApiError(
           error,
-          "Failed to save OTP. Please try again after 5 minuntes."
+          "Failed to save OTP. Please try again after 5 minuntes.",
         );
       });
   };
@@ -96,7 +96,7 @@ const ForgotPassword = () => {
   // Function to fetch OTP from the backend
   const fetchData = () => {
     axios
-      .get(`https://kisanmart.onrender.com/otp/${email}`)
+      .get(`https://kisan-be-odvc.onrender.com/otp/${email}`)
       .then((response) => {
         setOtp(response.data.otp);
       })
@@ -107,7 +107,7 @@ const ForgotPassword = () => {
 
   // Function to update password
   const setNewPasswordApi = () => {
-    const apiUrl = "https://kisanmart.onrender.com/update-password";
+    const apiUrl = "https://kisan-be-odvc.onrender.com/update-password";
     const requestBody = {
       email: email,
       newPassword: newPassword,

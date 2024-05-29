@@ -33,7 +33,7 @@ const FreshVegitables = () => {
       if (loading || !hasMore) return;
       setLoading(true);
       const token = localStorage.getItem("token");
-      const apiUrl = `https://kisanmart.onrender.com/get-vegetables`;
+      const apiUrl = `https://kisan-be-odvc.onrender.com/get-vegetables`;
 
       try {
         const response = await fetch(apiUrl, {
@@ -73,7 +73,7 @@ const FreshVegitables = () => {
     }
 
     try {
-      const deleteUrl = `https://kisanmart.onrender.com/deleteVegetable/${itemId}`;
+      const deleteUrl = `https://kisan-be-odvc.onrender.com/deleteVegetable/${itemId}`;
       const response = await fetch(deleteUrl, {
         method: "DELETE",
         headers: {

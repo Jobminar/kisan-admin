@@ -19,7 +19,7 @@ const AdditionalCharges = () => {
       setLoading(true);
       const token = localStorage.getItem("token");
       const response = await axios.get(
-        "https://kisanmart.onrender.com/get-charges",
+        "https://kisan-be-odvc.onrender.com/get-charges",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -41,7 +41,7 @@ const AdditionalCharges = () => {
       let response;
       if (charges._id) {
         response = await axios.patch(
-          "https://kisanmart.onrender.com/update-charges",
+          "https://kisan-be-odvc.onrender.com/update-charges",
           newCharge,
           {
             headers: {
@@ -51,7 +51,7 @@ const AdditionalCharges = () => {
         );
       } else {
         response = await axios.post(
-          "https://kisanmart.onrender.com/post-charges",
+          "https://kisan-be-odvc.onrender.com/post-charges",
           newCharge,
           {
             headers: {

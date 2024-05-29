@@ -19,7 +19,7 @@ const HomeBanner = () => {
     try {
       setLoading(true);
       const response = await axios.get(
-        "https://kisanmart.onrender.com/get-home",
+        "https://kisan-be-odvc.onrender.com/get-home",
       );
       setHomes(response.data);
     } catch (error) {
@@ -31,7 +31,9 @@ const HomeBanner = () => {
 
   const deleteHome = async (id) => {
     try {
-      await axios.delete(`https://kisanmart.onrender.com/delete-home/${id}`);
+      await axios.delete(
+        `https://kisan-be-odvc.onrender.com/delete-home/${id}`,
+      );
       setHomes(homes.filter((home) => home._id !== id));
     } catch (error) {
       setError("Error deleting home");
@@ -44,11 +46,15 @@ const HomeBanner = () => {
       const formData = new FormData();
       formData.append("name", newHome.name);
       formData.append("image", newHome.image);
-      await axios.post("https://kisanmart.onrender.com/post-home", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
+      await axios.post(
+        "https://kisan-be-odvc.onrender.com/post-home",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
         },
-      });
+      );
       setNewHome({ name: "", image: "" }); // Reset the form
       fetchHomes(); // Fetch the updated list of homes
     } catch (error) {

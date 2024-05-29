@@ -33,7 +33,7 @@ const Additionals = () => {
       if (loading || !hasMore) return;
       setLoading(true);
       const token = localStorage.getItem("token");
-      const apiUrl = `https://kisanmart.onrender.com/get-additional`;
+      const apiUrl = `https://kisan-be-odvc.onrender.com/get-additional`;
 
       try {
         const response = await fetch(apiUrl, {
@@ -73,7 +73,7 @@ const Additionals = () => {
     }
 
     try {
-      const deleteUrl = `https://kisanmart.onrender.com/deletefruit/${itemId}`; // Use the item ID in the delete URL
+      const deleteUrl = `https://kisan-be-odvc.onrender.com/deletefruit/${itemId}`; // Use the item ID in the delete URL
       const response = await fetch(deleteUrl, {
         method: "DELETE",
         headers: {

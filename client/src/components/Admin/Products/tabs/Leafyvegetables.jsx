@@ -34,7 +34,7 @@ const Leafyvegetables = () => {
       if (loading || !hasMore) return;
       setLoading(true);
       const token = localStorage.getItem("token");
-      const apiUrl = `https://kisanmart.onrender.com/get-leaf`;
+      const apiUrl = `https://kisan-be-odvc.onrender.com/get-leaf`;
 
       try {
         const response = await fetch(apiUrl, {
@@ -74,7 +74,7 @@ const Leafyvegetables = () => {
     }
 
     try {
-      const deleteUrl = `https://kisanmart.onrender.com/deleteLeaf/${itemId}`; // Use the item ID in the delete URL
+      const deleteUrl = `https://kisan-be-odvc.onrender.com/deleteLeaf/${itemId}`; // Use the item ID in the delete URL
       const response = await fetch(deleteUrl, {
         method: "DELETE",
         headers: {

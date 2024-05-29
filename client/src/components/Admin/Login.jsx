@@ -13,7 +13,7 @@ const Login = ({ onLogin }) => {
 
   const handleLogin = async () => {
     try {
-      const apiUrl = "https://kisanmart.onrender.com/admin/login";
+      const apiUrl = "https://kisan-be-odvc.onrender.com/admin/login";
       const response = await fetch(apiUrl, {
         method: "POST",
         headers: {

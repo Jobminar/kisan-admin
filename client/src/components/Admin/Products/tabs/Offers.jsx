@@ -35,7 +35,7 @@ const Offers = () => {
       if (loading || !hasMore) return;
       setLoading(true);
       const token = localStorage.getItem("token");
-      const apiUrl = `https://kisanmart.onrender.com/get-offer`;
+      const apiUrl = `https://kisan-be-odvc.onrender.com/get-offer`;
 
       try {
         const response = await fetch(apiUrl, {
@@ -75,7 +75,7 @@ const Offers = () => {
     }
 
     try {
-      const deleteUrl = `https://kisanmart.onrender.com/deleteOffer/${itemId}`; // Use the item ID in the delete URL
+      const deleteUrl = `https://kisan-be-odvc.onrender.com/deleteOffer/${itemId}`; // Use the item ID in the delete URL
       const response = await fetch(deleteUrl, {
         method: "DELETE",
         headers: {

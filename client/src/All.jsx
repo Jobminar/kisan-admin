@@ -50,7 +50,7 @@ const CreateFruitForm = () => {
       formDataToSend.append("itemImage", formData.itemImage);
 
       const response = await fetch(
-        "https://kisanmart.onrender.com/post-fruit",
+        "https://kisan-be-odvc.onrender.com/post-fruit",
         {
           method: "POST",
           headers: {
